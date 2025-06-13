@@ -1,0 +1,27 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    // These options will apply to *all* referenced projects
+    // unless explicitly overridden by them.
+    // It's good practice to set these foundational options here.
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true, // Another common recommended option
+    "skipLibCheck": true, // Often good for performance
+    "target": "ES2022", // A common baseline target
+    "module": "ESNext", // Common for modern bundlers
+    "lib": [
+      "ES2022",
+      "DOM"
+    ], // Common libs
+    // ... add any other global compiler options you want
+  }
+}

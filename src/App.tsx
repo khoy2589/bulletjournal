@@ -1,7 +1,12 @@
 import "./App.css";
+import Home from "./pages/home/home";
 
 function App() {
-  return <div className="text-3xl text-amber-400 flex justify-center">HI</div>;
+  return (
+    <div>
+      <Home />
+    </div>
+  );
 }
 
 export default App;

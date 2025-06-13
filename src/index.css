@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base colors using our journal palette */
+    --background: 247 245 243; /* journal-cream */
+    --foreground: 59 59 59;
+
+    --card: 255 255 255;
+    --card-foreground: 59 59 59;
+
+    --popover: 255 255 255;
+    --popover-foreground: 59 59 59;
+
+    --primary: 156 175 136; /* journal-sage */
+    --primary-foreground: 255 255 255;
+
+    --secondary: 240 235 229; /* journal-cream-dark */
+    --secondary-foreground: 59 59 59;
+
+    --muted: 248 248 246;
+    --muted-foreground: 115 115 115;
+
+    --accent: 200 183 219; /* journal-lavender */
+    --accent-foreground: 59 59 59;
+
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
+
+    --border: 229 229 229;
+    --input: 229 229 229;
+    --ring: 156 175 136; /* journal-sage */
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 247 245 243;
+    --sidebar-foreground: 59 59 59;
+    --sidebar-primary: 156 175 136;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 240 235 229;
+    --sidebar-accent-foreground: 59 59 59;
+    --sidebar-border: 229 229 229;
+    --sidebar-ring: 156 175 136;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .journal-gradient {
+    @apply bg-gradient-to-br from-journal-cream via-journal-cream-dark to-journal-sage/10;
+  }
+
+  .entry-hover {
+    @apply hover:bg-white/80 hover:shadow-md transition-all duration-200 hover:scale-[1.01];
+  }
+
+  .nav-item {
+    @apply hover:bg-journal-sage/10 transition-colors duration-200 rounded-xl;
+  }
+}

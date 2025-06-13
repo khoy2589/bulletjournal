@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Calendar, Plus, BookOpen, Target, Star } from "lucide-react";
-import DailyLog from "../../components/DailyLog";
-import MonthlyView from "../../components/MonthlyView";
-import FutureLog from "../../components/FutureLog";
-import Collections from "../../components/Collections";
-import Navigation from "../../components/Navigation";
-import DailyQuote from "../../components/DailyQuote";
+import DailyLog from "../components/DailyLog";
+import MonthlyView from "../components/MonthlyView";
+import FutureLog from "../components/FutureLog";
+import Collections from "../components/Collections";
+import Navigation from "../components/Navigation";
+import DailyQuote from "../components/DailyQuote";
 
 type View = "daily" | "monthly" | "future" | "collections";
 
-const Home: React.FC = () => {
+const Index = () => {
   const [currentView, setCurrentView] = useState<View>("daily");
 
   const renderCurrentView = () => {
@@ -33,10 +33,10 @@ const Home: React.FC = () => {
         {/* Header */}
         <header className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-journal-stone mb-2">
-            Y3ll0W's Bullet Journal
+            Digital Bullet Journal
           </h1>
           <p className="text-journal-stone/70 text-lg">
-            Searching for Meaningful life
+            Mindful planning for a meaningful life
           </p>
         </header>
 
@@ -55,4 +55,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Index;

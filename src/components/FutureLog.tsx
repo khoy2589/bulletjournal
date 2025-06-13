@@ -1,3 +1,4 @@
+import React from "react";
 import { Target, Plus } from "lucide-react";
 
 const FutureLog: React.FC = () => {

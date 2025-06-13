@@ -9,19 +9,23 @@
     }
   ],
   "compilerOptions": {
-    // These options will apply to *all* referenced projects
-    // unless explicitly overridden by them.
-    // It's good practice to set these foundational options here.
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true, // Another common recommended option
-    "skipLibCheck": true, // Often good for performance
-    "target": "ES2022", // A common baseline target
-    "module": "ESNext", // Common for modern bundlers
-    "lib": [
-      "ES2022",
-      "DOM"
-    ], // Common libs
-    // ... add any other global compiler options you want
-  }
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noUnusedLocals": false,
+    "strictNullChecks": false
+  },
 }

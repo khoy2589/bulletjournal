@@ -33,7 +33,7 @@ const Index = () => {
         {/* Header */}
         <header className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-journal-stone mb-2">
-            Digital Bullet Journal
+            Bullet Journal - Y3ll0W's
           </h1>
           <p className="text-journal-stone/70 text-lg">
             Mindful planning for a meaningful life

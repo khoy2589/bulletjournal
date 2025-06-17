@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Calendar, Plus, BookOpen, Target, Star } from "lucide-react";
 import DailyLog from "./DailyLog";

@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ignore credential store folder
+Secret
+.env
+readme.md

@@ -28,8 +28,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen journal-gradient">
-      <div className="max-w-6xl mx-auto px-4 py-6">
+    <div className="min-h-screen journal-gradient ">
+      <div className="max-w-7xl mx-auto px-4 py-6 ">
         {/* Header */}
         <header className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-journal-stone mb-2">
@@ -47,7 +47,7 @@ const Index = () => {
         <Navigation currentView={currentView} onViewChange={setCurrentView} />
 
         {/* Main Content */}
-        <main className="mt-8">
+        <main className="mt-8 ">
           <div className="animate-fade-in">{renderCurrentView()}</div>
         </main>
       </div>

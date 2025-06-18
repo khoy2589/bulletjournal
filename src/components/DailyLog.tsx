@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Plus, Check, Circle } from "lucide-react";
-
-const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL; //<- ไม่ได้ใช้
+import { DateEntry } from "./ui/date-entry";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption,
-} from "@headlessui/react";
 
 type PriorityLevel =
   | "ด่วนที่สุด"
@@ -54,22 +46,6 @@ type CompletionStatus =
   | "ยกเลิก"
   | "ทิ้ง";
 
-interface Entry {
-  id: string;
-  type: "task" | "event" | "note";
-  text: string;
-  completed?: CompletionStatus;
-  priority?:
-    | "ด่วนที่สุด"
-    | "ด่วน"
-    | "ปกติ"
-    | "พัก"
-    | "ยังไม่เริ่ม"
-    | "ไม่สำเร็จ"
-    | "ยกเลิก";
-  inspiration?: string; // ข้อความ หรือ URL ก็ได้ << ดึงมาจากที่ไหนซักที่เช่นไฟล์ md
-}
-
 const DailyLog: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [newEntry, setNewEntry] = useState("");
@@ -78,8 +54,48 @@ const DailyLog: React.FC = () => {
   );
   const [priorityState, setPriorityState] = useState<PriorityLevel>("ปกติ");
 
-  const today = new Date();
-  const dateString = today.toLocaleDateString("en-US", {
+  const [selectDate, setSelectDate] = useState<Date | null>(new Date());
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []);
+
+  const formatDateForDisplay = (date: Date | null, time: Date): string => {
+    const displayDateObject = date || time;
+
+    if (!date) {
+      const hours = String(time.getHours()).padStart(2, "0");
+      const minutes = String(time.getMinutes()).padStart(2, "0");
+      const seconds = String(time.getSeconds()).padStart(2, "0");
+      return `No date selected | ${String(time.getDate()).padStart(
+        2,
+        "0",
+      )}/${String(time.getMonth() + 1).padStart(
+        2,
+        "0",
+      )}/${time.getFullYear()} ${hours}:${minutes}:${seconds}`;
+    }
+
+    const day = String(displayDateObject.getDate()).padStart(2, "0");
+    const month = String(displayDateObject.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const year = displayDateObject.getFullYear();
+
+    const hours = String(time.getHours()).padStart(2, "0");
+    const minutes = String(time.getMinutes()).padStart(2, "0");
+    const seconds = String(time.getSeconds()).padStart(2, "0");
+
+    return `${day} / ${month} / ${year} | ${hours}:${minutes}:${seconds}`;
+  };
+
+  const currentLocaleDateString = (
+    selectDate || currentTime
+  ).toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -104,31 +120,15 @@ const DailyLog: React.FC = () => {
     fetchEntries();
   }, []);
 
-  const toggleCompleted = (id: string) => {
-    setEntries(
-      entries.map((entry) =>
-        entry.id === id
-          ? {
-              ...entry,
-              completed: entry.completed === "สำเร็จ" ? "สำเร็จ" : "ไม่สำเร็จ",
-            }
-          : entry,
-      ),
-    );
-  };
-
   const addEntry = async () => {
     if (!newEntry.trim()) return;
 
     const entry: Omit<Entry, "id"> = {
-      // id: Date.now().toString(),
       type: selectedType,
       text: newEntry.trim(),
-
-      // ตั้งค่าค่า default ของ field ใหม่ตรงนี้
-      completed: "พัก", // ✅ ใช้ string แทน boolean
-      priority: "ปกติ", // ✅ ค่า default
-      inspiration: "", // ✅ หรือใส่ข้อความ, emoji, URL รูปภาพ
+      completed: "พัก",
+      priority: "ปกติ",
+      inspiration: "",
     };
 
     setNewEntry("");
@@ -136,20 +136,12 @@ const DailyLog: React.FC = () => {
     try {
       await supabase.from("entries").insert([entry]);
 
-      // Reload entries after save
       const { data } = await supabase
         .from("entries")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (data) setEntries(data as Entry[]);
-
-      // await sendToDiscord(
-      //   /* ไม่ส่งแล้ว เอาไปเก็บใน supabase แทน */
-      //   `📅 ${new Date().toLocaleDateString()}\n📝 Type: ${entry.type}\n💬 ${
-      //     entry.text
-      //   }`,
-      // );
     } catch (error) {
       console.error("❌ Save error:", error);
     }
@@ -170,9 +162,8 @@ const DailyLog: React.FC = () => {
       return <div className="w-6 h-1 bg-journal-stone rounded-full"></div>;
     }
   };
-  /* ========================== Default Priority ========================== */
-  const [selectedPriority, setSelectedPriority] = useState(priorities[2]); // default = ปกติ
-  /* ====================================================================== */
+
+  const [selectedPriority, setSelectedPriority] = useState(priorities[2]);
 
   const getPriorityStyle = (priority: PriorityLevel) => {
     switch (priority) {
@@ -190,32 +181,28 @@ const DailyLog: React.FC = () => {
         return "bg-gray-200 text-red-400 italic";
       case "ยกเลิก":
         return "bg-yellow-100 text-yellow-500 italic";
+      default:
+        return ""; // Add default case for safety
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <h2 className="text-2xl font-bold text-journal-stone mb-2">
-          Daily Log
-        </h2>
-        <p className="text-journal-stone/70">{dateString}</p>
+      <div className="flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+        <h2 className="text-2xl font-bold text-journal-stone ">Daily Log</h2>
+        {/* FIX: Use currentLocaleDateString here */}
+        <p className="text-journal-stone/70 text-xl">
+          {currentLocaleDateString}
+        </p>
       </div>
 
       {/* Quick Entry */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-journal-stone">
-            Quick Entry
+            Date Entry: {formatDateForDisplay(selectDate, currentTime)}
           </h3>
-
-          <div className="">
-            {/* Priority */}
-            <h3 className="text-lg font-semibold text-journal-stone">
-              Priority
-            </h3>
-          </div>
         </div>
 
         {/* Type + Priority Selector */}
@@ -244,32 +231,6 @@ const DailyLog: React.FC = () => {
               </button>
             ))}
           </div>
-
-          {/* Priority */}
-          {/* Priority Selector */}
-          <Listbox value={selectedPriority} onChange={setSelectedPriority}>
-            <div className="relative flex gap-2 mb-4">
-              <ListboxButton
-                className={`
-                            px-4 py-2 rounded-xl font-medium transition-all duration-200
-                            ${getPriorityStyle(selectedPriority.label)}
-                          `}
-              >
-                {selectedPriority.label}
-              </ListboxButton>
-              <ListboxOptions className="absolute mt-1 bg-white border rounded-xl shadow-md z-10 w-40">
-                {priorities.map((p) => (
-                  <ListboxOption
-                    key={p.label}
-                    value={p}
-                    className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${p.color}`}
-                  >
-                    {p.label}
-                  </ListboxOption>
-                ))}
-              </ListboxOptions>
-            </div>
-          </Listbox>
         </div>
 
         {/* Input */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Plus, Check, Circle } from "lucide-react";
 import { DateEntry } from "./ui/date-entry";
+import CalendaHeader from "./JournalForm/CalendaHeader";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
@@ -66,31 +67,39 @@ const DailyLog: React.FC = () => {
     };
   }, []);
 
-  const formatDateForDisplay = (date: Date | null, time: Date): string => {
-    const displayDateObject = date || time;
+  type DateTimeFormatType = "date" | "time" | "datetime";
+  const formatDateForDisplay = (
+    date: Date | null,
+    time: Date,
+    formatType: DateTimeFormatType = "datetime",
+  ): string => {
+    const effectiveDate = date || time;
 
-    if (!date) {
-      const hours = String(time.getHours()).padStart(2, "0");
-      const minutes = String(time.getMinutes()).padStart(2, "0");
-      const seconds = String(time.getSeconds()).padStart(2, "0");
-      return `No date selected | ${String(time.getDate()).padStart(
-        2,
-        "0",
-      )}/${String(time.getMonth() + 1).padStart(
-        2,
-        "0",
-      )}/${time.getFullYear()} ${hours}:${minutes}:${seconds}`;
-    }
-
-    const day = String(displayDateObject.getDate()).padStart(2, "0");
-    const month = String(displayDateObject.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
-    const year = displayDateObject.getFullYear();
+    const day = String(effectiveDate.getDate()).padStart(2, "0");
+    const month = String(effectiveDate.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const year = effectiveDate.getFullYear();
 
     const hours = String(time.getHours()).padStart(2, "0");
     const minutes = String(time.getMinutes()).padStart(2, "0");
     const seconds = String(time.getSeconds()).padStart(2, "0");
 
-    return `${day} / ${month} / ${year} | ${hours}:${minutes}:${seconds}`;
+    const formattedDate = `${day} / ${month} / ${year}`;
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+    // Handle the "No date selected" case specifically for the 'date' or 'datetime' part
+    let datePart = formattedDate;
+    if (!date && (formatType === "date" || formatType === "datetime")) {
+      datePart = `No date selected | ${formattedDate}`; // Or just "No date selected" if you prefer less info
+    }
+
+    switch (formatType) {
+      case "date":
+        return datePart;
+      case "time":
+        return formattedTime;
+      case "datetime":
+        return `${datePart} | ${formattedTime}`;
+    }
   };
 
   const currentLocaleDateString = (
@@ -190,18 +199,18 @@ const DailyLog: React.FC = () => {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <h2 className="text-2xl font-bold text-journal-stone ">Daily Log</h2>
-        {/* FIX: Use currentLocaleDateString here */}
+        <h2 className="text-xl font-bold text-journal-stone ">Daily Log</h2>
+        {formatDateForDisplay(selectDate, currentTime, "time")}
         <p className="text-journal-stone/70 text-xl">
           {currentLocaleDateString}
         </p>
       </div>
 
-      {/* Quick Entry */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <div className="flex justify-between items-center mb-4">
+      {/* Form header */}
+      <div className=" bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+        <div className=" items-center mb-4">
           <h3 className="text-lg font-semibold text-journal-stone">
-            Date Entry: {formatDateForDisplay(selectDate, currentTime)}
+            <CalendaHeader />
           </h3>
         </div>
 

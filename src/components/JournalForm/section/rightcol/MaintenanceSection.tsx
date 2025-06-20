@@ -36,6 +36,7 @@ const MaintenanceSection = () => {
             className="flex items-center gap-2 py-1 border-b border-gray-200 last:border-b-0"
           >
             <input
+              placeholder="Plan your day..."
               type="checkbox"
               checked={maintenance[item.key]}
               onChange={() => toggleItem(item.key)}

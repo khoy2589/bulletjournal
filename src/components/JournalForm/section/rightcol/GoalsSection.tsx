@@ -18,29 +18,32 @@ const GoalsSection = () => {
           <div className="grid grid-cols-2 gap-2 mb-3">
             <div>
               <label className="text-xs italic text-gray-600">
-                Small goals - this week/months
+                Small goals - this week/months{" "}
+                <textarea
+                  value={dreamGoals.small}
+                  onChange={(e) =>
+                    setDreamGoals((prev) => ({
+                      ...prev,
+                      small: e.target.value,
+                    }))
+                  }
+                  className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed border border-gray-200 p-2"
+                  placeholder="Short-term goals..."
+                />
               </label>
-              <textarea
-                value={dreamGoals.small}
-                onChange={(e) =>
-                  setDreamGoals((prev) => ({ ...prev, small: e.target.value }))
-                }
-                className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed border border-gray-200 p-2"
-                placeholder="Short-term goals..."
-              />
             </div>
             <div>
               <label className="text-xs italic text-gray-600">
-                Big goals - this year, decade
+                Big goals - this year, decade{""}
+                <textarea
+                  value={dreamGoals.big}
+                  onChange={(e) =>
+                    setDreamGoals((prev) => ({ ...prev, big: e.target.value }))
+                  }
+                  className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed border border-gray-200 p-2"
+                  placeholder="Long-term goals..."
+                />
               </label>
-              <textarea
-                value={dreamGoals.big}
-                onChange={(e) =>
-                  setDreamGoals((prev) => ({ ...prev, big: e.target.value }))
-                }
-                className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed border border-gray-200 p-2"
-                placeholder="Long-term goals..."
-              />
             </div>
           </div>
         </div>

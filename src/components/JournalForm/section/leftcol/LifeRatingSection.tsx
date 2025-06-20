@@ -41,6 +41,7 @@ const LifeRatingSection = () => {
             <div key={item.key} className="flex items-center justify-between">
               <span>{item.label}</span>
               <input
+                placeholder="0-10"
                 type="text"
                 value={ratings[item.key]}
                 onChange={(e) => updateRating(item.key, e.target.value)}

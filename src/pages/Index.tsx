@@ -31,7 +31,7 @@ const Index = () => {
     <div className="min-h-screen journal-gradient ">
       <div className="max-w-7xl mx-auto px-4 py-6 ">
         {/* Header */}
-        <header className="mb-8 text-center">
+        <header className="select-none mb-8 text-center">
           <h1 className="text-4xl font-bold text-journal-stone mb-2">
             Bullet Journal
           </h1>

@@ -24,11 +24,11 @@ const DailyQuote: React.FC = () => {
   const todayQuote = quotes[new Date().getDate() % quotes.length];
 
   return (
-    <div className=" bg-gradient-to-r from-journal-lavender-light to-journal-peach-light rounded-2xl p-6 mb-8 text-center animate-fade-in">
-      <blockquote className="text-lg font-medium text-journal-stone mb-2">
+    <div className="bg-gradient-to-r from-journal-lavender-light to-journal-peach-light rounded-2xl p-6 mb-8 text-center animate-fade-in shadow-lg selection:bg-journal-lavender-light selection:text-journal-stone leading-relaxed">
+      <blockquote className="text-xl font-medium text-journal-stone mb-4  italic">
         "{todayQuote.text}"
       </blockquote>
-      <cite className="text-journal-stone/70 text-sm">
+      <cite className="text-journal-stone/70 text-sm font-light tracking-wide ">
         — {todayQuote.author}
       </cite>
     </div>

@@ -198,7 +198,7 @@ const DailyLog: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+      <div className="select-none flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
         <h2 className="text-xl font-bold text-journal-stone ">Daily Log</h2>
         {formatDateForDisplay(selectDate, currentTime, "time")}
         <p className="text-journal-stone/70 text-xl">

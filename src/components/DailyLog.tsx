@@ -85,7 +85,7 @@ const DailyLog: React.FC = () => {
     const seconds = String(time.getSeconds()).padStart(2, "0");
 
     const formattedDate = `${day} / ${month} / ${year}`;
-    const formattedTime = `${hours}:${minutes}:${seconds}`;
+    const formattedTime = `${hours} : ${minutes} : ${seconds}`;
 
     // Handle the "No date selected" case specifically for the 'date' or 'datetime' part
     let datePart = formattedDate;

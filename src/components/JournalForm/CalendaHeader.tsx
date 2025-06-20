@@ -42,14 +42,14 @@ const CalendaHeader = () => {
 
         {/* Sleep & Mood */}
         <div className="flex items-center gap-2 justify-end">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <span className="font-semibold select-none">Sleep:</span>
             <input
               type="text"
               value={sleepHours}
               onChange={(e) => setSleepHours(e.target.value)}
-              className="w-14 border-b border-gray-400 bg-transparent focus:outline-none focus:border-blue-500 text-center"
-              placeholder="8"
+              className="w-14 border-b border-gray-400 bg-transparent text-center focus:outline-none focus:ring-0"
+              placeholder="Hours"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -58,8 +58,8 @@ const CalendaHeader = () => {
               type="text"
               value={mood}
               onChange={(e) => setMood(e.target.value)}
-              className="w-12 border-b border-gray-400 bg-transparent focus:outline-none focus:border-blue-500 text-center"
-              placeholder="7"
+              className="w-12 border-b border-gray-400 bg-transparent  text-center focus:outline-none focus:ring-0"
+              placeholder="Level"
             />
           </div>
         </div>

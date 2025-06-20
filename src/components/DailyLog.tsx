@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Plus, Check, Circle } from "lucide-react";
 import { DateEntry } from "./ui/date-entry";
 import CalendaHeader from "./JournalForm/CalendaHeader";
+import JournalFormLayout from "./JournalForm/JournalFormLayout";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
@@ -211,6 +212,8 @@ const DailyLog: React.FC = () => {
         <div className=" items-center mb-4">
           <h3 className="text-lg font-semibold text-journal-stone">
             <CalendaHeader />
+            {/* Form Grid Layout */}
+            <JournalFormLayout />
           </h3>
         </div>
 

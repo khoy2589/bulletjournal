@@ -11,7 +11,7 @@ const CalendaHeader = () => {
   const currentDay = new Date().getDay();
 
   return (
-    <div className="border-b-2 border-gray-300 pb-4 ">
+    <div className="border-b-2 border-gray-300 pb-2 ">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
         {/* Date Picker */}
         <div className="flex items-center justify-start">
@@ -29,7 +29,7 @@ const CalendaHeader = () => {
           {days.map((day, index) => (
             <button
               key={day}
-              className={`w-8 h-8 text-xs font-medium rounded border transition-all duration-200 select-none ${
+              className={`w-10 h-10 text-sm font-medium rounded border transition-all duration-200 select-none ${
                 index === currentDay
                   ? "bg-journal-sage text-white shadow-md border-journal-sage/10"
                   : "border-gray-300 hover:bg-gray-100"
@@ -45,22 +45,39 @@ const CalendaHeader = () => {
           <div className="flex items-center gap-2 ">
             <span className="font-semibold select-none">Sleep:</span>
             <input
-              type="text"
+              type="number"
+              min={0}
+              max={24}
               value={sleepHours}
               onChange={(e) => setSleepHours(e.target.value)}
-              className="w-14 border-b border-gray-400 bg-transparent text-center focus:outline-none focus:ring-0"
-              placeholder="Hours"
+              className="w-17 border-b border-gray-400 bg-transparent  text-center focus:outline-none focus:ring-0"
+              placeholder="Hrs"
+              list="sleep-hours"
             />
+            <datalist id="sleep-hours">
+              {[...Array(24)].map((sleep, hour) => (
+                <option key={hour + 1}>{hour + 1}</option>
+              ))}
+            </datalist>
           </div>
+
           <div className="flex items-center gap-2">
             <span className="font-semibold select-none">Mood:</span>
             <input
-              type="text"
+              type="number"
+              min={0}
+              max={10}
               value={mood}
               onChange={(e) => setMood(e.target.value)}
-              className="w-12 border-b border-gray-400 bg-transparent  text-center focus:outline-none focus:ring-0"
-              placeholder="Level"
+              className="w-17 border-b border-gray-400 bg-transparent  text-center focus:outline-none focus:ring-0"
+              placeholder="Feel"
+              list="mood-level" // <-- add this
             />
+            <datalist id="mood-level">
+              {[...Array(10)].map((mood, level) => (
+                <option key={level + 1}>{level + 1}</option>
+              ))}
+            </datalist>
           </div>
         </div>
       </div>

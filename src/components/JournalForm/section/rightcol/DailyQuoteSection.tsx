@@ -17,9 +17,6 @@ const DailyQuoteSection = () => {
           className="w-full h-24 resize-none bg-transparent focus:outline-none text-sm leading-relaxed italic text-right"
           placeholder="Your daily inspiration..."
         />
-        <div className="text-right mt-2">
-          <span className="text-xs font-bold">@JUST.OAK</span>
-        </div>
       </div>
     </div>
   );

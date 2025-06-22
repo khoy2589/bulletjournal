@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Plus, Check, Circle } from "lucide-react";
-import { DateEntry } from "./ui/date-entry";
 import CalendaHeader from "./JournalForm/CalendaHeader";
 import JournalFormLayout from "./JournalForm/JournalFormLayout";
+import { stat } from "fs";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
@@ -196,6 +196,29 @@ const DailyLog: React.FC = () => {
     }
   };
 
+  const statuses: CompletionStatus[] = [
+    "สำเร็จ",
+    "ไม่สำเร็จ",
+    "กำลังทำ",
+    "พัก",
+    "หยุด",
+    "ยกเลิก",
+    "ทิ้ง",
+  ];
+
+  const toggleCompleted = (id: string) => {
+    setEntries(
+      entries.map((entry) => {
+        if (entry.id !== id) return entry;
+
+        const index = statuses.indexOf(entry.completed);
+        const nextStatus = statuses[(index + 1) % statuses.length];
+
+        return { ...entry, completed: nextStatus };
+      }),
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -210,11 +233,20 @@ const DailyLog: React.FC = () => {
       {/* Form header */}
       <div className=" bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
         <div className=" items-center mb-4">
-          <h3 className="text-lg font-semibold text-journal-stone">
+          <div className="text-lg font-semibold text-journal-stone">
             <CalendaHeader />
             {/* Form Grid Layout */}
             <JournalFormLayout />
-          </h3>
+            <div className="flex gap-3">
+              <button
+                onClick={addEntry}
+                className="px-6 py-3 bg-journal-sage text-white rounded-xl hover:bg-journal-sage-dark transition-colors duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <Plus size={20} />
+                <span className="hidden sm:inline">Save</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Type + Priority Selector */}

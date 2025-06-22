@@ -248,58 +248,6 @@ const DailyLog: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Type + Priority Selector */}
-        <div className="flex gap-2 flex-wrap justify-between items-center">
-          {/* Type Selector */}
-          <div className="flex gap-2 mb-4">
-            {[
-              { type: "task" as const, label: "Task", icon: "•" },
-              { type: "event" as const, label: "Event", icon: "O" },
-              { type: "note" as const, label: "Note", icon: "—" },
-            ].map(({ type, label, icon }) => (
-              <button
-                key={type}
-                onClick={() => setSelectedType(type)}
-                className={`
-                px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2
-                ${
-                  selectedType === type
-                    ? "bg-journal-sage text-white shadow-md"
-                    : "bg-journal-cream-dark text-journal-stone hover:bg-journal-sage/10"
-                }
-              `}
-              >
-                <span className="font-mono text-lg">{icon}</span>
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Input */}
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={newEntry}
-            onChange={(e) => setNewEntry(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addEntry();
-              }
-            }}
-            placeholder={`Add a new ${selectedType}...`}
-            className="flex-1 px-4 py-3 rounded-xl border border-journal-sage/20 focus:border-journal-sage focus:outline-none focus:ring-2 focus:ring-journal-sage/20 bg-white/90 text-black"
-          />
-          <button
-            onClick={addEntry}
-            className="px-6 py-3 bg-journal-sage text-white rounded-xl hover:bg-journal-sage-dark transition-colors duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
-          >
-            <Plus size={20} />
-            <span className="hidden sm:inline">Add</span>
-          </button>
-        </div>
       </div>
 
       {/* Entries */}

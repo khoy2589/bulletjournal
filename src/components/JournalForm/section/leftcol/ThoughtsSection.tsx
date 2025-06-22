@@ -1,8 +1,12 @@
-import { useState } from "react";
+interface ThoughtsSectionProps {
+  value: string;
+  onThoughtsChange: (thoughts: string) => void;
+}
 
-const ThoughtsSection = () => {
-  const [thoughts, setThoughts] = useState("");
-
+const ThoughtsSection = ({
+  value,
+  onThoughtsChange,
+}: ThoughtsSectionProps): JSX.Element => {
   return (
     <div className=" border-2 border-gray-400">
       <div className="flex justify-between items-center bg-gray-100 px-3 py-2 border-b border-gray-400">
@@ -13,8 +17,8 @@ const ThoughtsSection = () => {
       </div>
       <div className="p-3">
         <textarea
-          value={thoughts}
-          onChange={(e) => setThoughts(e.target.value)}
+          value={value}
+          onChange={(e) => onThoughtsChange(e.target.value)}
           className="w-full h-32 resize-none bg-transparent focus:outline-none text-sm leading-relaxed"
           placeholder="Write your thoughts here..."
         />

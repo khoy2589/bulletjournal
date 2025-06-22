@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Plus, Check, Circle } from "lucide-react";
-import CalendaHeader from "./JournalForm/CalendaHeader";
 import JournalFormLayout from "./JournalForm/JournalFormLayout";
 import { stat } from "fs";
 
@@ -236,8 +235,7 @@ const DailyLog: React.FC = () => {
       <div className=" bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
         <div className=" items-center mb-4">
           <div className="text-lg font-semibold text-journal-stone">
-            <CalendaHeader />
-            {/* Form Grid Layout */}
+            {/* Form Layout */}
             <JournalFormLayout />
             <div className="flex gap-3">
               <button

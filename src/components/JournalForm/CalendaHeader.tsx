@@ -2,10 +2,20 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const CalendaHeader = () => {
+interface CalendaHeaderProps {
+  sleepHours: string;
+  mood: string;
+  onSleepHoursChange: (sleepHours: string) => void;
+  onMoodChange: (mood: string) => void;
+}
+
+const CalendaHeader = ({
+  sleepHours,
+  mood,
+  onSleepHoursChange,
+  onMoodChange,
+}) => {
   const [selectDate, setSelectDate] = useState(new Date());
-  const [sleepHours, setSleepHours] = useState("");
-  const [mood, setMood] = useState("");
 
   const days = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"];
   const currentDay = new Date().getDay();
@@ -49,13 +59,13 @@ const CalendaHeader = () => {
               min={0}
               max={24}
               value={sleepHours}
-              onChange={(e) => setSleepHours(e.target.value)}
+              onChange={(e) => onSleepHoursChange(e.target.value)}
               className="w-17 border-b border-gray-400 bg-transparent  text-center focus:outline-none focus:ring-0"
               placeholder="Hrs"
               list="sleep-hours"
             />
             <datalist id="sleep-hours">
-              {[...Array(24)].map((sleep, hour) => (
+              {[...Array(24)].map((_, hour) => (
                 <option key={hour + 1}>{hour + 1}</option>
               ))}
             </datalist>
@@ -68,13 +78,13 @@ const CalendaHeader = () => {
               min={0}
               max={10}
               value={mood}
-              onChange={(e) => setMood(e.target.value)}
+              onChange={(e) => onMoodChange(e.target.value)}
               className="w-17 border-b border-gray-400 bg-transparent  text-center focus:outline-none focus:ring-0"
               placeholder="Feel"
               list="mood-level" // <-- add this
             />
             <datalist id="mood-level">
-              {[...Array(10)].map((mood, level) => (
+              {[...Array(10)].map((_, level) => (
                 <option key={level + 1}>{level + 1}</option>
               ))}
             </datalist>

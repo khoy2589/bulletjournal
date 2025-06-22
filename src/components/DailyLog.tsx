@@ -224,7 +224,9 @@ const DailyLog: React.FC = () => {
       {/* Header */}
       <div className="select-none flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
         <h2 className="text-xl font-bold text-journal-stone ">Daily Log</h2>
-        {formatDateForDisplay(selectDate, currentTime, "time")}
+        <div className="text-journal-stone text-xl">
+          {formatDateForDisplay(selectDate, currentTime, "time")}
+        </div>
         <p className="text-journal-stone/70 text-xl">
           {currentLocaleDateString}
         </p>

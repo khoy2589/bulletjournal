@@ -16,6 +16,7 @@ const DailyQuoteSection = () => {
           onChange={(e) => setQuote(e.target.value)}
           className="w-full h-24 resize-none bg-transparent focus:outline-none text-sm leading-relaxed italic text-right"
           placeholder="Your daily inspiration..."
+          readOnly
         />
       </div>
     </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 type MaintenanceItem = {
-  id?: string;
+  id: string;
   label: string;
   completed: boolean;
 };
@@ -10,54 +10,120 @@ type MaintenanceItem = {
 const MaintenanceSection = () => {
   const [items, setItems] = useState<MaintenanceItem[]>([]);
   const [newItem, setNewItem] = useState("");
+  const [entryId, setEntryId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadItems = async () => {
+    const loadLatestEntry = async () => {
+      console.log("Loading latest entry...");
+
       const { data, error } = await supabase
-        .from("maintenance_items")
-        .select("*")
-        .eq("completed", false);
+        .from("entries")
+        .select("id, MaintenancePlan")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
 
       if (error) {
         console.error("Load error:", error);
+
+        if (error.code !== "PGRST116") {
+          console.error("Unexpected error:", error);
+        }
       } else if (data) {
-        setItems(data);
+        console.log("Loaded entry:", data);
+        setEntryId(data.id);
+        setItems(data.MaintenancePlan ?? []);
       }
 
       setLoading(false);
     };
 
-    loadItems();
+    loadLatestEntry();
   }, []);
+
+  const createOrUpdateEntry = async (updated: MaintenanceItem[]) => {
+    console.log("Saving with entryId:", entryId, "items:", updated); // Debug
+
+    if (!entryId) {
+      // Create new entry
+      const { data: newEntry, error: createError } = await supabase
+        .from("entries")
+        .insert({
+          MaintenancePlan: updated,
+        })
+        .select("id")
+        .single();
+
+      if (createError) {
+        console.error("Create error:", createError);
+        return false;
+      } else {
+        console.log("Created new entry:", newEntry);
+        setEntryId(newEntry.id);
+        return true;
+      }
+    } else {
+      // Update existing entry
+      const { error } = await supabase
+        .from("entries")
+        .update({
+          MaintenancePlan: updated,
+        })
+        .eq("id", entryId);
+
+      if (error) {
+        console.error("Update error:", error);
+        return false;
+      } else {
+        console.log("Updated successfully");
+        return true;
+      }
+    }
+  };
+
+  const updatePlanInDB = async (updated: MaintenanceItem[]) => {
+    if (!entryId) return;
+    const { error } = await supabase
+      .from("entries")
+      .update({
+        MaintenancePlan: updated,
+      })
+      .eq("id", entryId);
+
+    if (error) console.error("Update error:", error);
+  };
 
   const addItem = async () => {
     if (!newItem.trim()) return;
 
-    const { data, error } = await supabase
-      .from("maintenance_items")
-      .insert([{ label: newItem, completed: false }])
-      .select()
-      .single();
+    const newItemObj: MaintenanceItem = {
+      id: crypto.randomUUID(),
+      label: newItem.trim(),
+      completed: false,
+    };
 
-    if (data) {
-      setItems((prev) => [...prev, data]);
-      setNewItem("");
-    }
+    const updated = [...items, newItemObj];
+    setItems(updated);
+    setNewItem("");
+    await updatePlanInDB(updated);
+
+    await createOrUpdateEntry(updated);
   };
 
-  const completeItem = async (id: string) => {
-    await supabase
-      .from("maintenance_items")
-      .update({ completed: true })
-      .eq("id", id);
+  const completeItem = async (index: number) => {
+    const updated = [...items];
+    updated[index].completed = true;
+    const filtered = updated.filter((item) => !item.completed);
 
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    setItems(filtered);
+    await createOrUpdateEntry(filtered);
   };
 
-  const deleteItem = async (id: string) => {
-    await supabase.from("maintenance_items").delete().eq("id", id);
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const deleteItem = async (index: number) => {
+    const updated = items.filter((_, i) => i !== index);
+    setItems(updated);
+    await createOrUpdateEntry(updated);
   };
 
   return (
@@ -70,22 +136,22 @@ const MaintenanceSection = () => {
         {loading ? (
           <p className="text-xs italic text-gray-500">Loading...</p>
         ) : (
-          items.map((item) => (
+          items.map((item, index) => (
             <div
-              key={item.id}
+              key={item.id ?? index}
               className="flex items-center justify-between border-b border-gray-200 py-1"
             >
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   aria-label={`Mark ${item.label} complete`}
-                  onChange={() => item.id && completeItem(item.id)}
+                  onChange={() => completeItem(index)}
                   className="w-4 h-4"
                 />
                 <span className="text-sm">{item.label}</span>
               </div>
               <button
-                onClick={() => item.id && deleteItem(item.id)}
+                onClick={() => deleteItem(index)}
                 className="text-xs text-red-500"
               >
                 ✕

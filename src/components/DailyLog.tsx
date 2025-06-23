@@ -237,15 +237,6 @@ const DailyLog: React.FC = () => {
           <div className="text-lg font-semibold text-journal-stone">
             {/* Form Layout */}
             <JournalFormLayout />
-            <div className="flex gap-3">
-              <button
-                onClick={addEntry}
-                className="px-6 py-3 bg-journal-sage text-white rounded-xl hover:bg-journal-sage-dark transition-colors duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
-              >
-                <Plus size={20} />
-                <span className="hidden sm:inline">Save</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -253,52 +244,9 @@ const DailyLog: React.FC = () => {
       {/* Entries */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
         <h3 className="text-lg font-semibold text-journal-stone mb-4">
-          Today's Entries
+          Entries
         </h3>
-
-        <div className="space-y-3">
-          {entries.map((entry) => (
-            <div
-              key={entry.id}
-              className={`
-                flex items-center gap-4 p-4 rounded-xl transition-all duration-200 entry-hover
-                ${entry.completed ? "opacity-60" : ""}
-              `}
-            >
-              <button
-                onClick={() =>
-                  entry.type === "task" && toggleCompleted(entry.id)
-                }
-                className={
-                  entry.type === "task" ? "cursor-pointer" : "cursor-default"
-                }
-              >
-                {getEntryIcon(entry)}
-              </button>
-
-              <div className="flex-1">
-                <p
-                  className={`
-                  text-journal-stone ${entry.completed ? "line-through" : ""}
-                  ${entry.priority ? "font-semibold" : ""}
-                `}
-                >
-                  {entry.priority && (
-                    <span className="text-journal-peach mr-1">★</span>
-                  )}
-                  {entry.inspiration && (
-                    <span className="text-journal-lavender mr-1">!</span>
-                  )}
-                  {entry.text}
-                </p>
-              </div>
-
-              <div className="text-xs text-journal-stone/50 capitalize">
-                {entry.type}
-              </div>
-            </div>
-          ))}
-        </div>
+        <div className="space-y-4">file.mockup</div>
       </div>
     </div>
   );

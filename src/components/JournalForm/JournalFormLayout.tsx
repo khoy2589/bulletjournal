@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 // Left Column
 import GratitudeSection from "./section/leftcol/GratitudeSection";
@@ -13,6 +13,28 @@ import ScheduleSection from "./section/rightcol/ScheduleSection";
 import GoalsSection from "./section/rightcol/GoalsSection";
 import ThinkOutSideTheBoxSection from "./section/leftcol/ThinkOutSideTheBoxSection";
 import CalendaHeader from "./CalendaHeader";
+import { Plus } from "lucide-react";
+
+// Define interfaces for component refs
+interface MaintenanceRef {
+  getItems: () => Array<{ id: string; label: string; completed: boolean }>;
+}
+
+interface ScheduleRef {
+  getItems: () => Array<{ id: string; time: string; activity: string }>;
+}
+
+interface GoalsRef {
+  getItems: () => Array<{ id: string; goal: string; completed: boolean }>;
+}
+
+interface QuoteRef {
+  getQuote: () => string;
+}
+
+interface ThinkOutsideRef {
+  getContent: () => string;
+}
 
 const JournalFormLayout = () => {
   const [sleepHours, setSleepHours] = useState("");
@@ -33,11 +55,92 @@ const JournalFormLayout = () => {
   });
   const [improvement, setImprovement] = useState("");
 
+  // Refs to get data from child components
+  const maintenanceRef = useRef<MaintenanceRef>(null);
+  const scheduleRef = useRef<ScheduleRef>(null);
+  const goalsRef = useRef<GoalsRef>(null);
+  const quoteRef = useRef<QuoteRef>(null);
+  const thinkOutsideRef = useRef<ThinkOutsideRef>(null);
+
   const handleRatingChange = (key: keyof typeof ratings, value: string) => {
     setRatings((prev) => ({
       ...prev,
       [key]: value,
     }));
+  };
+
+  const exportToCSV = () => {
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    const csvData = [
+      // Header row
+      ["Field", "Value"],
+      // Data rows
+      ["Date", currentDate],
+      ["Sleep Hours", sleepHours],
+      ["Mood", mood],
+
+      ["Thoughts", thoughts.replace(/,/g, ";")], // Replace commas to avoid CSV issues
+      ["Yesterday Best", yesterdayBest.replace(/,/g, ";")],
+
+      ["Grateful For", grateful.replace(/,/g, ";")],
+      ["Self Love Rating", ratings.selfLove],
+
+      ["Mindfulness Rating", ratings.mindfulness],
+      ["Confidence Rating", ratings.confident],
+
+      ["Health Rating", ratings.health],
+      ["Relationship Rating", ratings.relationship],
+
+      ["Creativity Rating", ratings.creativity],
+      ["Career Rating", ratings.career],
+
+      ["Financial Rating", ratings.financial],
+      ["Areas for Improvement", improvement.replace(/,/g, ";")],
+
+      [
+        "Think Outside Box",
+        thinkOutsideRef.current?.getContent().replace(/,/g, ";") || "",
+      ],
+    ];
+
+    // Add maintenance items
+    const maintenanceItems = maintenanceRef.current?.getItems() || [];
+    maintenanceItems.forEach((item, index) => {
+      csvData.push([`Maintenance ${index + 1}`, item.label]);
+    });
+
+    // Add goals
+    const goals = goalsRef.current?.getItems() || [];
+    goals.forEach((goal, index) => {
+      csvData.push([`Goal ${index + 1}`, goal.goal]);
+    });
+
+    // Add schedule
+    const schedule = scheduleRef.current?.getItems() || [];
+    schedule.forEach((item, index) => {
+      csvData.push([`Schedule ${index + 1}`, `${item.time}: ${item.activity}`]);
+    });
+
+    // Convert to CSV string
+    const csvContent = csvData
+      .map((row) => row.map((field) => `"${field}"`).join(","))
+      .join("\n");
+
+    // Download file
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `journal_${currentDate}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -48,6 +151,7 @@ const JournalFormLayout = () => {
         onSleepHoursChange={setSleepHours}
         onMoodChange={setMood}
       />
+
       <div className="max-w-6xl mx-auto px-4 py-6 ">
         {/* Form Grid Layout */}
         <div className="grid grid-cols-4 gap-6 md:grid-cols-2 ">
@@ -73,6 +177,16 @@ const JournalFormLayout = () => {
         <div className="mt-6">
           {/* Bottom Row */}
           <ThinkOutSideTheBoxSection />
+        </div>
+      </div>
+      <div className="max-w-6xl mx-auto px-4 py-4">
+        <div className="flex flex-wrap gap-4 justify-center mb-4">
+          <button
+            onClick={exportToCSV}
+            className="bg-journal-sage hover:bg-journal-sage-dark text-white transition-colors duration-200 px-4 py-2 rounded-md text-sm font-medium"
+          >
+            📊 Export to CSV
+          </button>
         </div>
       </div>
     </div>

@@ -2,19 +2,19 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-interface CalendaHeaderProps {
+interface CalendarHeaderProps {
   sleepHours: string;
   mood: string;
   onSleepHoursChange: (sleepHours: string) => void;
   onMoodChange: (mood: string) => void;
 }
 
-const CalendaHeader = ({
+const CalendarHeader = ({
   sleepHours,
   mood,
   onSleepHoursChange,
   onMoodChange,
-}) => {
+}: CalendarHeaderProps): JSX.Element => {
   const [selectDate, setSelectDate] = useState(new Date());
 
   const days = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"];
@@ -95,4 +95,4 @@ const CalendaHeader = ({
   );
 };
 
-export default CalendaHeader;
+export default CalendarHeader;

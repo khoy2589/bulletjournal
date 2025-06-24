@@ -12,8 +12,7 @@ import MaintenanceSection from "./section/rightcol/MaintenanceSection";
 import ScheduleSection from "./section/rightcol/ScheduleSection";
 import GoalsSection from "./section/rightcol/GoalsSection";
 import ThinkOutSideTheBoxSection from "./section/leftcol/ThinkOutSideTheBoxSection";
-import CalendaHeader from "./CalendaHeader";
-import { Plus } from "lucide-react";
+import CalendarHeader from "./CalendarHeader";
 
 // Define interfaces for component refs
 interface MaintenanceRef {
@@ -59,8 +58,7 @@ const JournalFormLayout = () => {
   const maintenanceRef = useRef<MaintenanceRef>(null);
   const scheduleRef = useRef<ScheduleRef>(null);
   const goalsRef = useRef<GoalsRef>(null);
-  const quoteRef = useRef<QuoteRef>(null);
-  const thinkOutsideRef = useRef<ThinkOutsideRef>(null);
+  const [creativity, setCreativity] = useState("");
 
   const handleRatingChange = (key: keyof typeof ratings, value: string) => {
     setRatings((prev) => ({
@@ -99,16 +97,15 @@ const JournalFormLayout = () => {
       ["Areas for Improvement", improvement.replace(/,/g, ";")],
 
       [
-        "Think Outside Box",
-        thinkOutsideRef.current?.getContent().replace(/,/g, ";") || "",
+        "Maintenance Plan",
+        maintenanceRef.current
+          ?.getItems()
+          .map((item) => item.label)
+          .join(",") || "No items",
       ],
-    ];
 
-    // Add maintenance items
-    const maintenanceItems = maintenanceRef.current?.getItems() || [];
-    maintenanceItems.forEach((item, index) => {
-      csvData.push([`Maintenance ${index + 1}`, item.label]);
-    });
+      ["Think Outside Box", creativity.replace(/,/g, ";")],
+    ];
 
     // Add goals
     const goals = goalsRef.current?.getItems() || [];
@@ -145,7 +142,7 @@ const JournalFormLayout = () => {
 
   return (
     <div className="">
-      <CalendaHeader
+      <CalendarHeader
         sleepHours={sleepHours}
         mood={mood}
         onSleepHoursChange={setSleepHours}
@@ -168,7 +165,7 @@ const JournalFormLayout = () => {
             onImprovementChange={setImprovement}
           />
 
-          <MaintenanceSection />
+          <MaintenanceSection ref={maintenanceRef} />
           <DailyQuoteSection />
           <ScheduleSection />
           <GoalsSection />
@@ -176,7 +173,10 @@ const JournalFormLayout = () => {
 
         <div className="mt-6">
           {/* Bottom Row */}
-          <ThinkOutSideTheBoxSection />
+          <ThinkOutSideTheBoxSection
+            creativity={creativity}
+            onCreativityChange={setCreativity}
+          />
         </div>
       </div>
       <div className="max-w-6xl mx-auto px-4 py-4">

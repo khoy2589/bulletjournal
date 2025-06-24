@@ -1,7 +1,12 @@
-import { useState } from "react";
+interface ThinkOutSideTheBoxSectionProps {
+  creativity: string;
+  onCreativityChange: (creativity: string) => void;
+}
 
-const ThinkOutSideTheBoxSection = () => {
-  const [creativity, setCreativity] = useState("");
+const ThinkOutSideTheBoxSection = ({
+  creativity,
+  onCreativityChange,
+}: ThinkOutSideTheBoxSectionProps): JSX.Element => {
   return (
     <div className="border-2 border-gray-400">
       <div className="flex  justify-between items-center bg-gray-100 px-3 py-2 border-b border-gray-400">
@@ -13,7 +18,7 @@ const ThinkOutSideTheBoxSection = () => {
       <div className="p-3">
         <textarea
           value={creativity}
-          onChange={(e) => setCreativity(e.target.value)}
+          onChange={(e) => onCreativityChange(e.target.value)}
           className="w-full h-32 resize-none bg-transparent focus:outline-none text-xs leading-relaxed"
           placeholder="Let your creativity flow..."
         />

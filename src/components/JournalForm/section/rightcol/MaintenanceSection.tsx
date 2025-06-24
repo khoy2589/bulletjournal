@@ -1,100 +1,76 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import Papa from "papaparse";
+import { parse } from "path";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 
 type MaintenanceItem = {
-  id: string;
-  label: string;
-  completed: boolean;
+  id?: string;
+  label?: string;
+  completed?: string | boolean;
 };
 
-const MaintenanceSection = () => {
+export interface MaintenanceRef {
+  getItems: () => MaintenanceItem[];
+}
+
+const MaintenanceSection = forwardRef<MaintenanceRef>((_, ref) => {
   const [items, setItems] = useState<MaintenanceItem[]>([]);
   const [newItem, setNewItem] = useState("");
-  const [entryId, setEntryId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  useImperativeHandle(ref, () => ({
+    getItems: () => items,
+  }));
+
+  interface MaintenanceCSVRow {
+    id?: string;
+    label: string;
+    completed: string | boolean;
+  }
+
+  // Load CSV on first render
   useEffect(() => {
-    const loadLatestEntry = async () => {
-      console.log("Loading latest entry...");
-
-      const { data, error } = await supabase
-        .from("entries")
-        .select("id, MaintenancePlan")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error) {
-        console.error("Load error:", error);
-
-        if (error.code !== "PGRST116") {
-          console.error("Unexpected error:", error);
-        }
-      } else if (data) {
-        console.log("Loaded entry:", data);
-        setEntryId(data.id);
-        setItems(data.MaintenancePlan ?? []);
-      }
-
-      setLoading(false);
+    const parseRow = (row: MaintenanceCSVRow): MaintenanceItem => {
+      return {
+        id: row.id || crypto.randomUUID(),
+        label: row.label || "",
+        completed: row.completed === "true" || row.completed === true,
+      };
     };
+    const loadFromCSV = async () => {
+      try {
+        const res = await fetch("/MaintenanceList.csv");
+        const text = await res.text();
 
-    loadLatestEntry();
+        Papa.parse(text, {
+          header: true,
+          complete: (results) => {
+            const parsed = (results.data as MaintenanceCSVRow[]).map(parseRow);
+            setItems(parsed);
+            localStorage.setItem("maintenance", JSON.stringify(parsed));
+            setLoading(false);
+          },
+        });
+      } catch (err) {
+        console.error("Failed to load CSV:", err);
+        setLoading(false);
+      }
+    };
+    // only load if localStorage is empty
+    const saved = localStorage.getItem("maintenance");
+    if (saved) {
+      setItems(JSON.parse(saved));
+      setLoading(false);
+    } else {
+      loadFromCSV();
+    }
   }, []);
 
-  const createOrUpdateEntry = async (updated: MaintenanceItem[]) => {
-    console.log("Saving with entryId:", entryId, "items:", updated); // Debug
-
-    if (!entryId) {
-      // Create new entry
-      const { data: newEntry, error: createError } = await supabase
-        .from("entries")
-        .insert({
-          MaintenancePlan: updated,
-        })
-        .select("id")
-        .single();
-
-      if (createError) {
-        console.error("Create error:", createError);
-        return false;
-      } else {
-        console.log("Created new entry:", newEntry);
-        setEntryId(newEntry.id);
-        return true;
-      }
-    } else {
-      // Update existing entry
-      const { error } = await supabase
-        .from("entries")
-        .update({
-          MaintenancePlan: updated,
-        })
-        .eq("id", entryId);
-
-      if (error) {
-        console.error("Update error:", error);
-        return false;
-      } else {
-        console.log("Updated successfully");
-        return true;
-      }
-    }
+  // save to local storage
+  const saveToStorage = (updated: MaintenanceItem[]) => {
+    localStorage.setItem("maintenance", JSON.stringify(updated));
   };
 
-  const updatePlanInDB = async (updated: MaintenanceItem[]) => {
-    if (!entryId) return;
-    const { error } = await supabase
-      .from("entries")
-      .update({
-        MaintenancePlan: updated,
-      })
-      .eq("id", entryId);
-
-    if (error) console.error("Update error:", error);
-  };
-
-  const addItem = async () => {
+  const addItem = () => {
     if (!newItem.trim()) return;
 
     const newItemObj: MaintenanceItem = {
@@ -105,25 +81,22 @@ const MaintenanceSection = () => {
 
     const updated = [...items, newItemObj];
     setItems(updated);
+    saveToStorage(updated);
     setNewItem("");
-    await updatePlanInDB(updated);
-
-    await createOrUpdateEntry(updated);
   };
 
-  const completeItem = async (index: number) => {
+  const completeItem = (index: number) => {
     const updated = [...items];
     updated[index].completed = true;
     const filtered = updated.filter((item) => !item.completed);
-
     setItems(filtered);
-    await createOrUpdateEntry(filtered);
+    saveToStorage(filtered);
   };
 
-  const deleteItem = async (index: number) => {
+  const deleteItem = (index: number) => {
     const updated = items.filter((_, i) => i !== index);
     setItems(updated);
-    await createOrUpdateEntry(updated);
+    saveToStorage(updated);
   };
 
   return (
@@ -170,16 +143,19 @@ const MaintenanceSection = () => {
           <input
             value={newItem}
             onChange={(e) => setNewItem(e.target.value)}
-            className="border px-2 py-1 text-sm flex-1"
+            className="border px-2 py-1 text-sm flex-1 focus:outline-none"
             placeholder="Add item..."
           />
-          <button type="submit" className="text-xs text-blue-500">
+          <button
+            type="submit"
+            className="text-s bg-blue-500 p-1  rounded-sm text-white"
+          >
             Add
           </button>
         </form>
       </div>
     </div>
   );
-};
+});
 
 export default MaintenanceSection;

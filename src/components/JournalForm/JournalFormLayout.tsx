@@ -68,7 +68,7 @@ const JournalFormLayout = () => {
     big: "",
   });
 
-  const [achievementIdeas, setAchievementIdeas] = useState("");
+  const [achievementIdeas, setAchievementIdeas] = useState<string[]>([""]);
 
   const handleRatingChange = (key: keyof typeof ratings, value: string) => {
     setRatings((prev) => ({
@@ -111,7 +111,7 @@ const JournalFormLayout = () => {
         maintenanceRef.current
           ?.getItems()
           .map((item) => item.label)
-          .join(",") || "No items",
+          .join(";") || "No items",
       ],
 
       // today schdule, reward to myself after
@@ -123,7 +123,7 @@ const JournalFormLayout = () => {
       ["Dream Come True (Big)", dreamGoals.big.replace(/,/g, ";")],
 
       // 20 Idea
-      ["20 Ideas", achievementIdeas.replace(/,/g, ";")],
+      ["20 Ideas", achievementIdeas.join(";")],
 
       ["Think Outside Box", creativity.replace(/,/g, ";")],
     ];
@@ -142,7 +142,7 @@ const JournalFormLayout = () => {
 
     // Convert to CSV string
     const csvContent = csvData
-      .map((row) => row.map((field) => `"${field}"`).join(","))
+      .map((row) => row.map((field) => `"${field}"`).join(";"))
       .join("\n");
 
     // Download file
@@ -202,8 +202,8 @@ const JournalFormLayout = () => {
           />
         </div>
 
+        {/* Bottom Row */}
         <div className="mt-6">
-          {/* Bottom Row */}
           <ThinkOutSideTheBoxSection
             creativity={creativity}
             onCreativityChange={setCreativity}

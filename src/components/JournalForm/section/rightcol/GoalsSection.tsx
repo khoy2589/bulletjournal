@@ -4,8 +4,8 @@ interface GoalsSectionProps {
     big: string;
   };
   onDreamGoalsChange: (dreamGoals: { small: string; big: string }) => void;
-  achievementIdeas: string;
-  onAchievementIdeasChange: (achievementIdeas: string) => void;
+  achievementIdeas: string[];
+  onAchievementIdeasChange: (achievementIdeas: string[]) => void;
 }
 
 const GoalsSection = ({
@@ -62,31 +62,33 @@ const GoalsSection = ({
           <h3 className="font-bold text-sm">20 Ideas to Achieve My Goals</h3>
         </div>
         <div className="p-3">
-          <textarea
-            value={achievementIdeas}
-            onChange={(e) => onAchievementIdeasChange(e.target.value)}
-            className="w-full h-48 resize-none bg-transparent focus:outline-none text-xs leading-relaxed"
-            placeholder="1. 
-2. 
-3. 
-4. 
-5. 
-6. 
-7. 
-8. 
-9. 
-10. 
-11. 
-12. 
-13. 
-14. 
-15. 
-16. 
-17. 
-18. 
-19. 
-20. "
-          />
+          <div className="grid grid-cols-2 gap-2">
+            {achievementIdeas.map((idea, i) => (
+              <div key={idea[i]} className="flex items-center space-x-2">
+                <span className="text-xs w-5">{i + 1}.</span>
+                <input
+                  placeholder="Idea"
+                  type="text"
+                  value={idea}
+                  onChange={(e) => {
+                    const updated = [...achievementIdeas];
+                    updated[i] = e.target.value;
+                    onAchievementIdeasChange(updated);
+                  }}
+                  className="w-full text-xs bg-transparent border border-gray-300 rounded px-1 py-0.5"
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                onAchievementIdeasChange([...achievementIdeas, ""])
+              }
+              className="text-xs text-blue-500 hover:underline"
+            >
+              + Add Idea
+            </button>
+          </div>
         </div>
       </div>
     </div>

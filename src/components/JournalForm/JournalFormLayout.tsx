@@ -60,6 +60,16 @@ const JournalFormLayout = () => {
   const goalsRef = useRef<GoalsRef>(null);
   const [creativity, setCreativity] = useState("");
 
+  const [todaySchedule, setTodaySchedule] = useState("");
+  const [reward, setReward] = useState("");
+
+  const [dreamGoals, setDreamGoals] = useState({
+    small: "",
+    big: "",
+  });
+
+  const [achievementIdeas, setAchievementIdeas] = useState("");
+
   const handleRatingChange = (key: keyof typeof ratings, value: string) => {
     setRatings((prev) => ({
       ...prev,
@@ -103,6 +113,17 @@ const JournalFormLayout = () => {
           .map((item) => item.label)
           .join(",") || "No items",
       ],
+
+      // today schdule, reward to myself after
+      ["Today's Schedule", todaySchedule.replace(/,/g, ";")],
+      ["Reward to Myself After", reward.replace(/,/g, ";")],
+
+      // dream come true(small, big)
+      ["Dream Come True (Small)", dreamGoals.small.replace(/,/g, ";")],
+      ["Dream Come True (Big)", dreamGoals.big.replace(/,/g, ";")],
+
+      // 20 Idea
+      ["20 Ideas", achievementIdeas.replace(/,/g, ";")],
 
       ["Think Outside Box", creativity.replace(/,/g, ";")],
     ];
@@ -167,8 +188,18 @@ const JournalFormLayout = () => {
 
           <MaintenanceSection ref={maintenanceRef} />
           <DailyQuoteSection />
-          <ScheduleSection />
-          <GoalsSection />
+          <ScheduleSection
+            schedule={todaySchedule}
+            onScheduleChange={setTodaySchedule}
+            rewards={reward}
+            onRewardsChange={setReward}
+          />
+          <GoalsSection
+            dreamGoals={dreamGoals}
+            onDreamGoalsChange={setDreamGoals}
+            achievementIdeas={achievementIdeas}
+            onAchievementIdeasChange={setAchievementIdeas}
+          />
         </div>
 
         <div className="mt-6">

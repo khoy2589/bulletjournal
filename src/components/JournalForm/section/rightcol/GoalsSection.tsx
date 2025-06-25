@@ -1,12 +1,19 @@
-import { useState } from "react";
+interface GoalsSectionProps {
+  dreamGoals: {
+    small: string;
+    big: string;
+  };
+  onDreamGoalsChange: (dreamGoals: { small: string; big: string }) => void;
+  achievementIdeas: string;
+  onAchievementIdeasChange: (achievementIdeas: string) => void;
+}
 
-const GoalsSection = () => {
-  const [dreamGoals, setDreamGoals] = useState({
-    small: "",
-    big: "",
-  });
-  const [achievementIdeas, setAchievementIdeas] = useState("");
-
+const GoalsSection = ({
+  dreamGoals,
+  onDreamGoalsChange,
+  achievementIdeas,
+  onAchievementIdeasChange,
+}: GoalsSectionProps): JSX.Element => {
   return (
     <div className="space-y-4">
       {/* Dream Come True Section */}
@@ -22,10 +29,10 @@ const GoalsSection = () => {
                 <textarea
                   value={dreamGoals.small}
                   onChange={(e) =>
-                    setDreamGoals((prev) => ({
-                      ...prev,
+                    onDreamGoalsChange({
+                      ...dreamGoals,
                       small: e.target.value,
-                    }))
+                    })
                   }
                   className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed border border-gray-200 p-2"
                   placeholder="Short-term goals..."
@@ -38,7 +45,7 @@ const GoalsSection = () => {
                 <textarea
                   value={dreamGoals.big}
                   onChange={(e) =>
-                    setDreamGoals((prev) => ({ ...prev, big: e.target.value }))
+                    onDreamGoalsChange({ ...dreamGoals, big: e.target.value })
                   }
                   className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed border border-gray-200 p-2"
                   placeholder="Long-term goals..."
@@ -57,7 +64,7 @@ const GoalsSection = () => {
         <div className="p-3">
           <textarea
             value={achievementIdeas}
-            onChange={(e) => setAchievementIdeas(e.target.value)}
+            onChange={(e) => onAchievementIdeasChange(e.target.value)}
             className="w-full h-48 resize-none bg-transparent focus:outline-none text-xs leading-relaxed"
             placeholder="1. 
 2. 

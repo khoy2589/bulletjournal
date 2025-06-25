@@ -1,9 +1,18 @@
 import { useState } from "react";
 
-const ScheduleSection = () => {
-  const [schedule, setSchedule] = useState("");
-  const [rewards, setRewards] = useState("");
+interface ScheduleSectionProps {
+  schedule: string;
+  onScheduleChange: (schedule: string) => void;
+  rewards: string;
+  onRewardsChange: (rewards: string) => void;
+}
 
+const ScheduleSection = ({
+  schedule,
+  onScheduleChange,
+  rewards,
+  onRewardsChange,
+}: ScheduleSectionProps): JSX.Element => {
   return (
     <div className="border-2 border-gray-400">
       <div className="bg-gray-100 px-3 py-2 border-b border-gray-400">
@@ -12,7 +21,7 @@ const ScheduleSection = () => {
       <div className="p-3">
         <textarea
           value={schedule}
-          onChange={(e) => setSchedule(e.target.value)}
+          onChange={(e) => onScheduleChange(e.target.value)}
           className="w-full h-32 resize-none bg-transparent focus:outline-none text-sm leading-relaxed"
           placeholder="Plan your day..."
         />
@@ -25,7 +34,7 @@ const ScheduleSection = () => {
           </div>
           <textarea
             value={rewards}
-            onChange={(e) => setRewards(e.target.value)}
+            onChange={(e) => onRewardsChange(e.target.value)}
             className="w-full h-16 resize-none bg-transparent focus:outline-none text-xs leading-relaxed"
             placeholder="How will you reward yourself?"
           />

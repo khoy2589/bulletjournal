@@ -58,8 +58,15 @@ const GoalsSection = ({
 
       {/* 20 Ideas Section */}
       <div className="border-2 border-gray-400">
-        <div className="bg-gray-100 px-3 py-2 border-b border-gray-400">
+        <div className="flex justify-between bg-gray-100 px-3 py-2 border-b border-gray-400">
           <h3 className="font-bold text-sm">20 Ideas to Achieve My Goals</h3>
+          <button
+            type="button"
+            onClick={() => onAchievementIdeasChange([...achievementIdeas, ""])}
+            className="text-xs text-blue-500 hover:underline"
+          >
+            + Add Idea
+          </button>
         </div>
         <div className="p-3">
           <div className="grid grid-cols-2 gap-2">
@@ -79,15 +86,6 @@ const GoalsSection = ({
                 />
               </div>
             ))}
-            <button
-              type="button"
-              onClick={() =>
-                onAchievementIdeasChange([...achievementIdeas, ""])
-              }
-              className="text-xs text-blue-500 hover:underline"
-            >
-              + Add Idea
-            </button>
           </div>
         </div>
       </div>

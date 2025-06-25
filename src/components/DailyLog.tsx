@@ -14,10 +14,6 @@ interface Entry {
 
 const DailyLog: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
-  const [newEntry, setNewEntry] = useState("");
-  const [selectedType, setSelectedType] = useState<"task" | "event" | "note">(
-    "task",
-  );
 
   const [selectDate, setSelectDate] = useState<Date | null>(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());

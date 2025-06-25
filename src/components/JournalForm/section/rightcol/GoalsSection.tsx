@@ -74,7 +74,7 @@ const GoalsSection = ({
               <div key={idea[i]} className="flex items-center space-x-2">
                 <span className="text-xs w-5">{i + 1}.</span>
                 <input
-                  placeholder="Idea"
+                  placeholder="Goal Done By..."
                   type="text"
                   value={idea}
                   onChange={(e) => {
@@ -82,7 +82,7 @@ const GoalsSection = ({
                     updated[i] = e.target.value;
                     onAchievementIdeasChange(updated);
                   }}
-                  className="w-full text-xs bg-transparent border border-gray-300 rounded px-1 py-0.5"
+                  className="focus:outline-none w-full text-xs bg-transparent border border-gray-300 rounded px-1 py-0.5"
                 />
               </div>
             ))}

@@ -1,51 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { Plus, Check, Circle } from "lucide-react";
 import JournalFormLayout from "./JournalForm/JournalFormLayout";
-import { stat } from "fs";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-type PriorityLevel =
-  | "ด่วนที่สุด"
-  | "ด่วน"
-  | "ปกติ"
-  | "พัก"
-  | "ยังไม่เริ่ม"
-  | "ไม่สำเร็จ"
-  | "ยกเลิก";
-
-type EntryType = "task" | "event" | "note";
-
 interface Entry {
   id: string;
-  type: EntryType;
   text: string;
-  completed?: CompletionStatus;
-  priority?: PriorityLevel;
   inspiration?: string;
 }
-
-const priorities: { label: PriorityLevel; color: string }[] = [
-  { label: "ด่วนที่สุด", color: "text-red-600" },
-  { label: "ด่วน", color: "text-orange-500" },
-  { label: "ปกติ", color: "text-green-600" },
-  { label: "พัก", color: "text-purple-600" },
-  { label: "ยังไม่เริ่ม", color: "text-gray-400" },
-  { label: "ไม่สำเร็จ", color: "text-red-400" },
-  { label: "ยกเลิก", color: "text-yellow-500" },
-];
-
-type CompletionStatus =
-  | "สำเร็จ"
-  | "ไม่สำเร็จ"
-  | "กำลังทำ"
-  | "พัก"
-  | "หยุด"
-  | "ยกเลิก"
-  | "ทิ้ง";
 
 const DailyLog: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -53,7 +18,6 @@ const DailyLog: React.FC = () => {
   const [selectedType, setSelectedType] = useState<"task" | "event" | "note">(
     "task",
   );
-  const [priorityState, setPriorityState] = useState<PriorityLevel>("ปกติ");
 
   const [selectDate, setSelectDate] = useState<Date | null>(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -129,101 +93,12 @@ const DailyLog: React.FC = () => {
     fetchEntries();
   }, []);
 
-  const addEntry = async () => {
-    if (!newEntry.trim()) return;
-
-    const entry: Omit<Entry, "id"> = {
-      type: selectedType,
-      text: newEntry.trim(),
-      completed: "พัก",
-      priority: "ปกติ",
-      inspiration: "",
-    };
-
-    setNewEntry("");
-
-    try {
-      await supabase.from("entries").insert([entry]);
-
-      const { data } = await supabase
-        .from("entries")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (data) setEntries(data as Entry[]);
-    } catch (error) {
-      console.error("❌ Save error:", error);
-    }
-  };
-
-  const getEntryIcon = (entry: Entry) => {
-    if (entry.type === "task") {
-      return entry.completed ? (
-        <div className="w-6 h-6 bg-journal-sage rounded-full flex items-center justify-center">
-          <Check size={14} className="text-white" />
-        </div>
-      ) : (
-        <div className="w-6 h-6 border-2 border-journal-sage rounded-full"></div>
-      );
-    } else if (entry.type === "event") {
-      return <Circle size={20} className="text-journal-lavender" />;
-    } else {
-      return <div className="w-6 h-1 bg-journal-stone rounded-full"></div>;
-    }
-  };
-
-  const [selectedPriority, setSelectedPriority] = useState(priorities[2]);
-
-  const getPriorityStyle = (priority: PriorityLevel) => {
-    switch (priority) {
-      case "ด่วนที่สุด":
-        return "bg-red-100 text-red-600";
-      case "ด่วน":
-        return "bg-orange-100 text-orange-500";
-      case "ปกติ":
-        return "bg-green-100 text-green-600";
-      case "พัก":
-        return "bg-purple-100 text-purple-600";
-      case "ยังไม่เริ่ม":
-        return "bg-gray-100 text-gray-400";
-      case "ไม่สำเร็จ":
-        return "bg-gray-200 text-red-400 italic";
-      case "ยกเลิก":
-        return "bg-yellow-100 text-yellow-500 italic";
-      default:
-        return ""; // Add default case for safety
-    }
-  };
-
-  const statuses: CompletionStatus[] = [
-    "สำเร็จ",
-    "ไม่สำเร็จ",
-    "กำลังทำ",
-    "พัก",
-    "หยุด",
-    "ยกเลิก",
-    "ทิ้ง",
-  ];
-
-  const toggleCompleted = (id: string) => {
-    setEntries(
-      entries.map((entry) => {
-        if (entry.id !== id) return entry;
-
-        const index = statuses.indexOf(entry.completed);
-        const nextStatus = statuses[(index + 1) % statuses.length];
-
-        return { ...entry, completed: nextStatus };
-      }),
-    );
-  };
-
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="select-none flex justify-between items-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+      <div className="flex flex-row justify-between  select-none  bg-white/80 backdrop-blur-sm rounded-2xl px-6 py-4 shadow-lg border border-white/20 ">
         <h2 className="text-xl font-bold text-journal-stone ">Daily Log</h2>
-        <div className="text-journal-stone text-xl">
+        <div className="items-center pl-44 text-journal-stone text-xl">
           {formatDateForDisplay(selectDate, currentTime, "time")}
         </div>
         <p className="text-journal-stone/70 text-xl">

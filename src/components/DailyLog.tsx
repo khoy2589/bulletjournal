@@ -89,6 +89,10 @@ const DailyLog: React.FC = () => {
     fetchEntries();
   }, []);
 
+  function handleLoadCSV(key: string): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -117,7 +121,19 @@ const DailyLog: React.FC = () => {
         <h3 className="text-lg font-semibold text-journal-stone mb-4">
           Entries
         </h3>
-        <div className="space-y-4">file.mockup</div>
+        <div className="space-y-4">
+          {Object.keys(localStorage)
+            .filter((key) => key.startsWith("journal_") && key.endsWith(".csv"))
+            .map((key) => (
+              <button
+                key={key}
+                className="block w-full text-left bg-white hover:bg-gray-100 px-4 py-2 rounded shadow"
+                onClick={() => handleLoadCSV(key)}
+              >
+                {key}
+              </button>
+            ))}
+        </div>
       </div>
     </div>
   );

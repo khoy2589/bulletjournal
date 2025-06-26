@@ -1,4 +1,3 @@
-// lib/submitEntry.ts
 import { supabase } from "../lib/supabase";
 
 export interface EntryFormData {

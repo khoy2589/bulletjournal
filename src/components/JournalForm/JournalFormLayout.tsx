@@ -14,6 +14,8 @@ import GoalsSection from "./section/rightcol/GoalsSection";
 import ThinkOutSideTheBoxSection from "./section/leftcol/ThinkOutSideTheBoxSection";
 import CalendarHeader from "./CalendarHeader";
 
+import { supabase } from "@/lib/supabase";
+
 // Define interfaces for component refs
 interface MaintenanceRef {
   getItems: () => Array<{ id: string; label: string; completed: boolean }>;
@@ -77,7 +79,7 @@ const JournalFormLayout = () => {
     }));
   };
 
-  const exportToCSV = () => {
+  const exportToCSV = async () => {
     const currentDate = new Date().toISOString().split("T")[0];
 
     const csvData = [
@@ -142,8 +144,29 @@ const JournalFormLayout = () => {
 
     // Convert to CSV string
     const csvContent = csvData
-      .map((row) => row.map((field) => `"${field}"`).join(";"))
+      .map((row) => row.map((field) => `"${field}"`).join(","))
       .join("\n");
+    // Save to localStorage
+    localStorage.setItem(`journal_${currentDate}.csv`, csvContent);
+
+    const fileName = `journal_${currentDate}.csv`;
+    const file = new File([csvContent], fileName, {
+      type: "text/csv",
+    });
+
+    // Upload to Supabase Storage (bucket: "exports")
+    const { error } = await supabase.storage
+      .from("exports")
+      .upload(fileName, file, {
+        upsert: true,
+        contentType: "text/csv",
+      });
+
+    if (error) {
+      console.error("Upload failed:", error.message);
+    } else {
+      console.log("Upload successful");
+    }
 
     // Download file
     const BOM = "\uFEFF";

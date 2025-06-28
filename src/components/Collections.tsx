@@ -132,7 +132,7 @@ const Collections: React.FC = () => {
               </h4>
               {collection.recentItems.map((item, index) => (
                 <div
-                  key={index}
+                  key={item[index]}
                   className="flex items-center gap-2 text-sm text-journal-stone"
                 >
                   <div

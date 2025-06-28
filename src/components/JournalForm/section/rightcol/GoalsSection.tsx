@@ -71,7 +71,7 @@ const GoalsSection = ({
         <div className="p-3">
           <div className="grid grid-cols-2 gap-2">
             {achievementIdeas.map((idea, i) => (
-              <div key={idea[i]} className="flex items-center space-x-2">
+              <div key={i} className="flex items-center space-x-2">
                 <span className="text-xs w-5">{i + 1}.</span>
                 <input
                   placeholder="Goal Done By..."

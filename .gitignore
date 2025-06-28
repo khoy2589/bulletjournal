@@ -26,3 +26,4 @@ dist-ssr
 # ignore credential store folder
 .env
 readme.md
+exports

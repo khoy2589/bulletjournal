@@ -150,7 +150,14 @@ const JournalFormLayout = () => {
     localStorage.setItem(`journal_${currentDate}.csv`, csvContent);
 
     const fileName = `journal_${currentDate}.csv`;
-    const file = new File([csvContent], fileName, {
+
+    // Download file
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const file = new File([blob], fileName, {
       type: "text/csv",
     });
 
@@ -168,11 +175,7 @@ const JournalFormLayout = () => {
       console.log("Upload successful");
     }
 
-    // Download file
-    const BOM = "\uFEFF";
-    const blob = new Blob([BOM + csvContent], {
-      type: "text/csv;charset=utf-8;",
-    });
+    // Create download link
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);

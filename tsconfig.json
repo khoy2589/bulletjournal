@@ -3,12 +3,10 @@
   "references": [
     {
       "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
     }
   ],
   "compilerOptions": {
+    "strict": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -24,16 +22,17 @@
     "allowJs": true,
     "noUnusedLocals": false,
     "strictNullChecks": false,
-    "target": "ES2020",
-    "module": "ESNext",
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "dist-electron",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
-    "strict": true,
   },
   "include": [
-    "server.ts"
+    "server.ts",
+    "electron",
+    "dist/preload.js"
   ]
 }

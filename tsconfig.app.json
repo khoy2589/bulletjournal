@@ -1,5 +1,13 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": false, // Enable after fixing noImplicitAny errors
+    "strictFunctionTypes": false, // Enable after strictNullChecks
+    "strictBindCallApply": false, // Enable after strictFunctionTypes
+    "strictPropertyInitialization": false, // Enable after strictBindCallApply
+    "noImplicitReturns": true, // This one is usually safe
+    "exactOptionalPropertyTypes": false,
     "composite": true,
     "noEmit": false,
     // "noEmit": true,
@@ -15,14 +23,15 @@
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "strict": true,
+    /* Additional checks */
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "isolatedModules": true,
     "moduleDetection": "force",
     "jsx": "react-jsx",
     /* Linting */
-    "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
     "baseUrl": ".",
@@ -33,6 +42,12 @@
     }
   },
   "include": [
-    "src"
+    "src",
+    "public/exports/fileOperations.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "electron"
   ]
 }

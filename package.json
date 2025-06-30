@@ -9,8 +9,13 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "ts-node server.ts"
+    "server": "ts-node server.ts",
+    "start": "vite",
+    "electron:build": "tsc electron/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop && del dist\\main.cjs 2>nul && ren dist\\main.js main.cjs",
+    "electron:start": "npm run electron:build && electron dist/main.cjs",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:8080 && npm run electron:start\""
   },
+  "main": "electron/dist/main.js",
   "dependencies": {
     "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^3.9.0",
@@ -75,11 +80,14 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
-    "@types/node": "^22.15.34",
+    "@types/electron": "^1.4.38",
+    "@types/node": "^24.0.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^7.6.0",
+    "electron": "^37.1.0",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
@@ -90,6 +98,19 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
-  }
+    "vite": "^5.4.1",
+    "wait-on": "^7.2.0"
+  },
+  "description": "ใส่หน้า portfolio ในเว็บด้วย",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khoy2589/bulletjournal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/khoy2589/bulletjournal/issues"
+  },
+  "homepage": "https://github.com/khoy2589/bulletjournal#readme"
 }

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Calendar, Plus, BookOpen, Target, Star } from "lucide-react";
 import DailyLog from "./DailyLog";
 import MonthlyView from "./MonthlyView";
 import FutureLog from "./FutureLog";
 import Collections from "./Collections";
 import Navigation from "./Navigation";
 import DailyQuote from "./DailyQuote";
+import Portfolio from "./Portfolio";
 
-type View = "daily" | "monthly" | "future" | "collections";
+type View = "daily" | "monthly" | "future" | "collections" | "portfolio";
 
 const Home: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>("daily");
@@ -18,6 +18,8 @@ const Home: React.FC = () => {
         return <DailyLog />;
       case "monthly":
         return <MonthlyView />;
+      case "portfolio":
+        return <Portfolio />;
       case "future":
         return <FutureLog />;
       case "collections":

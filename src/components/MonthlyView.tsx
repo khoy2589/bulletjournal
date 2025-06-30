@@ -99,7 +99,7 @@ const MonthlyView: React.FC = () => {
         <div className="grid grid-cols-7 gap-2">
           {days.map((day, index) => (
             <div
-              key={day.index}
+              key={index}
               className={`
                 aspect-square p-2 rounded-xl border border-transparent transition-all duration-200
                 ${day ? "hover:bg-journal-sage/10 cursor-pointer" : ""}

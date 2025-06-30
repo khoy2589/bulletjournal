@@ -6,8 +6,9 @@ import FutureLog from "../components/FutureLog";
 import Collections from "../components/Collections";
 import Navigation from "../components/Navigation";
 import DailyQuote from "../components/DailyQuote";
+import Portfolio from "@/components/Portfolio";
 
-type View = "daily" | "monthly" | "future" | "collections";
+type View = "daily" | "monthly" | "future" | "collections" | "portfolio";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<View>("daily");
@@ -18,6 +19,8 @@ const Index = () => {
         return <DailyLog />;
       case "monthly":
         return <MonthlyView />;
+      case "portfolio":
+        return <Portfolio />;
       case "future":
         return <FutureLog />;
       case "collections":

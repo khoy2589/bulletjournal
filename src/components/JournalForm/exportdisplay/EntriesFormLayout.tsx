@@ -29,7 +29,7 @@ export function EntriesFormLayout() {
         const url = URL.createObjectURL(blob);
 
         return (
-          <div className="" key={key}>
+          <div className="flex" key={key}>
             <a
               key={key}
               href={url}

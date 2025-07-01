@@ -236,11 +236,13 @@ const JournalFormLayout = () => {
           />
         </div>
       </div>
-      <div className="max-w-6xl mx-auto px-4 py-4">
-        <div className="flex flex-wrap gap-4 justify-center mb-4">
+
+      {/* Export Button */}
+      <div className="max-w-6xl mx-auto px-4 pt-4">
+        <div className="flex flex-wrap gap-4 justify-center">
           <button
             onClick={exportToCSV}
-            className="bg-journal-sage hover:bg-journal-sage-dark text-white transition-colors duration-200 px-4 py-2 rounded-md text-sm font-medium"
+            className="bg-journal-sage hover:bg-journal-sage-dark text-white transition-colors duration-200 px-4 py-2 rounded-md text-s font-medium"
           >
             📊 Export to CSV
           </button>

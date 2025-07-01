@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import JournalFormLayout from "./JournalForm/JournalFormLayout";
-import { EntriesFormLayout } from "./JournalForm/exportdisplay/EntriesFormLayout";
+import EntriesFormLayout from "./JournalForm/exportdisplay/EntriesFormLayout";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;

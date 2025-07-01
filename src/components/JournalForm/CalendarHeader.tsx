@@ -81,7 +81,7 @@ const CalendarHeader = ({
               value={mood}
               onChange={(e) => onMoodChange(e.target.value)}
               className="w-10 bg-white border border-green-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent py-1 text-sm font-medium"
-              placeholder="5"
+              placeholder="0"
               list="mood-level"
             />
           </div>

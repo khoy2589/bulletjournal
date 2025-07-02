@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-const PORT = 8080;
+const PORT = 3001;
 const wss = new WebSocketServer({ port: 3001 });
 
 wss.on("connection", (ws) => {

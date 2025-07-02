@@ -299,7 +299,7 @@ export default function EntriesFormLayout() {
           <div className="text-center py-8 text-gray-500">
             <p>
               WebSocket disconnected. Make sure your server is running on
-              ws://localhost:8080
+              ws://localhost:3001
             </p>
             <p className="text-sm mt-2">Attempting to reconnect...</p>
           </div>
@@ -375,7 +375,7 @@ export default function EntriesFormLayout() {
         </h3>
         <div className="text-sm text-blue-700 space-y-1">
           <p>
-            1. Make sure your WebSocket server is running on ws://localhost:8080
+            1. Make sure your WebSocket server is running on ws://localhost:3001
           </p>
           <p>2. Server should watch the public/exports folder for changes</p>
           <p>3. Files will automatically sync when added/modified/deleted</p>

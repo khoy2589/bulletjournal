@@ -9,11 +9,11 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "ts-node server.ts",
+    "server": "node server.js",
     "start": "vite",
     "electron:build": "tsc electron/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop && del dist\\main.cjs 2>nul && ren dist\\main.js main.cjs",
     "electron:start": "npm run electron:build && electron dist/main.cjs",
-    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:8080 && npm run electron:start\""
+    "electron:dev": "concurrently \"npm run dev\"  \"npm run server\" \"wait-on http://localhost:8080 && npm run electron:start\""
   },
   "main": "electron/dist/main.js",
   "dependencies": {
@@ -58,6 +58,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
     "express": "^5.1.0",
+    "gapi-script": "^1.2.0",
     "googleapis": "^150.0.1",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
@@ -83,6 +84,8 @@
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/electron": "^1.6.12",
+    "@types/gapi": "^0.0.47",
+    "@types/gapi.auth2": "^0.0.61",
     "@types/node": "^24.0.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

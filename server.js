@@ -1,3 +1,4 @@
+import { WebSocketServer } from "ws";
 import express from "express";
 import cors from "cors";
 import fs from "fs";
@@ -6,7 +7,25 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+
 const PORT = 8080;
+const wss = new WebSocketServer({ port: 3001 });
+
+wss.on("connection", (ws) => {
+  console.log("Client connected via WebSocket");
+
+  ws.send("Welcome from WebSocket server");
+
+  ws.on("message", (message) => {
+    console.log("Received:", message.toString());
+    ws.send(`You said: ${message}`);
+  });
+
+  ws.on("close", () => {
+    console.log("Client disconnected");
+  });
+});
+
 app.use(cors());
 app.use(express.json());
 const EXPORTS_PATH = path.join(__dirname, "public", "exports");

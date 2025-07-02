@@ -100,7 +100,7 @@ export default function EntriesFormLayout() {
       setError("");
 
       // Replace with your WebSocket server URL
-      const ws = new WebSocket("ws://localhost:8080");
+      const ws = new WebSocket("ws://localhost:3001");
       wsRef.current = ws;
 
       ws.onopen = () => {

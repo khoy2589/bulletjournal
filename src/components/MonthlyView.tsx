@@ -1,7 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+
+type EventItem = {
+  summary: string;
+  start: { date?: string; dateTime?: string };
+};
+
 const MonthlyView: React.FC = () => {
+  const [events, setEvents] = useState<Record<number, string[]>>({});
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const today = new Date();
@@ -18,17 +27,50 @@ const MonthlyView: React.FC = () => {
     year: "numeric",
   });
 
-  const days = [];
+  const days: (number | null)[] = [];
 
-  // Empty cells for days before the first day of the month
-  for (let i = 0; i < startingDay; i++) {
-    days.push(null);
-  }
+  for (let i = 0; i < startingDay; i++) days.push(null);
+  for (let day = 1; day <= daysInMonth; day++) days.push(day);
 
-  // Days of the month
-  for (let day = 1; day <= daysInMonth; day++) {
-    days.push(day);
-  }
+  useEffect(() => {
+    const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: (response: { access_token: string }) => {
+        fetchEvents(response.access_token);
+      },
+    });
+    tokenClient.requestAccessToken();
+  }, [currentDate]);
+
+  const fetchEvents = async (accessToken: string) => {
+    const startOfMonth = new Date(year, month, 1).toISOString();
+    const endOfMonth = new Date(year, month + 1, 0).toISOString();
+
+    const res = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${startOfMonth}&timeMax=${endOfMonth}&singleEvents=true&orderBy=startTime`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    const data = await res.json();
+    const items: EventItem[] = data.items || [];
+
+    const grouped: Record<number, string[]> = {};
+    items.forEach((event) => {
+      const dateStr = event.start.dateTime ?? event.start.date;
+      if (dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        if (!grouped[day]) grouped[day] = [];
+        grouped[day].push(event.summary);
+      }
+    });
+
+    setEvents(grouped);
+  };
 
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(currentDate);
@@ -36,19 +78,13 @@ const MonthlyView: React.FC = () => {
     setCurrentDate(newDate);
   };
 
-  const isToday = (day: number | null) => {
+  const isToday = (day: number | null): boolean => {
     if (!day) return false;
     return (
       today.getDate() === day &&
       today.getMonth() === month &&
       today.getFullYear() === year
     );
-  };
-
-  const sampleEvents = {
-    15: ["Team meeting", "Dentist appointment"],
-    22: ["Birthday party"],
-    28: ["Project deadline"],
   };
 
   return (
@@ -60,7 +96,6 @@ const MonthlyView: React.FC = () => {
             <CalendarIcon size={28} className="text-journal-sage" />
             Monthly Overview
           </h2>
-
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigateMonth("prev")}
@@ -83,7 +118,6 @@ const MonthlyView: React.FC = () => {
 
       {/* Calendar */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        {/* Days of week */}
         <div className="grid grid-cols-7 gap-2 mb-4">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <div
@@ -95,58 +129,52 @@ const MonthlyView: React.FC = () => {
           ))}
         </div>
 
-        {/* Calendar days */}
         <div className="grid grid-cols-7 gap-2">
-          {days.map((day, index) => (
-            <div
-              key={index}
-              className={`
-                aspect-square p-2 rounded-xl border border-transparent transition-all duration-200
+          {days.map((day, index) => {
+            const key = day ? `day-${day}` : `empty-${index}`;
+            return (
+              <div
+                key={key}
+                className={`aspect-square p-2 rounded-xl border border-transparent transition-all duration-200
                 ${day ? "hover:bg-journal-sage/10 cursor-pointer" : ""}
                 ${
                   isToday(day)
                     ? "bg-journal-sage text-white shadow-md"
                     : "bg-journal-cream-dark/30"
-                }
-              `}
-            >
-              {day && (
-                <div className="h-full flex flex-col">
-                  <div
-                    className={`font-semibold mb-1 ${
-                      isToday(day) ? "text-white" : "text-journal-stone"
-                    }`}
-                  >
-                    {day}
-                  </div>
-
-                  {/* Sample events */}
-                  {sampleEvents[day as keyof typeof sampleEvents] && (
-                    <div className="space-y-1 flex-1">
-                      {sampleEvents[day as keyof typeof sampleEvents].map(
-                        (event, i) => (
+                }`}
+              >
+                {day && (
+                  <div className="h-full flex flex-col">
+                    <div
+                      className={`font-semibold mb-1 ${
+                        isToday(day) ? "text-white" : "text-journal-stone"
+                      }`}
+                    >
+                      {day}
+                    </div>
+                    {events[day] && (
+                      <div className="space-y-1 flex-1">
+                        {events[day].map((eventTitle) => (
                           <div
-                            key={event[i]}
-                            className={`
-                            text-xs px-2 py-1 rounded-md truncate
+                            key={`${day}-${eventTitle}`}
+                            className={`text-xs px-2 py-1 rounded-md truncate
                             ${
                               isToday(day)
                                 ? "bg-white/20 text-white"
                                 : "bg-journal-lavender/20 text-journal-stone"
-                            }
-                          `}
-                            title={event}
+                            }`}
+                            title={eventTitle}
                           >
-                            {event}
+                            {eventTitle}
                           </div>
-                        ),
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

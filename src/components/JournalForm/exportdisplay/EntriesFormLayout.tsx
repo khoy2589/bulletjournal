@@ -74,39 +74,38 @@ export default function EntriesFormLayout() {
   }, []);
 
   const handleWebSocketMessage = useCallback(
-    (data: FileOperation) => {
-      switch (data.type) {
-        case "FILES_LIST":
-          setFiles(data.files);
-          break;
+    (event: MessageEvent) => {
+      try {
+        const data: FileOperation = JSON.parse(event.data);
 
-        case "FILE_ADDED":
-        case "FILE_UPDATED":
-          // Combined cases - no duplicate code
-          addOrUpdateFile(data.filename, data.content);
-          break;
+        switch (data.type) {
+          case "FILES_LIST":
+            setFiles(data.files);
+            break;
 
-        case "FILE_DELETED":
-          removeFile(data.filename);
-          break;
+          case "FILE_ADDED":
+          case "FILE_UPDATED":
+            addOrUpdateFile(data.filename, data.content);
+            break;
 
-        case "ERROR":
-          setError(data.message);
-          break;
+          case "FILE_DELETED":
+            removeFile(data.filename);
+            break;
 
-        default:
-          console.log("Unknown message type:", data.type);
+          case "ERROR":
+            setError(data.message);
+            break;
+
+          default:
+            console.log("Unknown message type:", data.type);
+        }
+      } catch (err) {
+        console.error("Error parsing message:", err);
+        setError("Error parsing server message");
       }
     },
     [addOrUpdateFile, removeFile],
   );
-
-  const handleWebSocketCSV = (
-    parsedData: { field: string; value: string }[],
-  ) => {
-    const csvData = parsedData.map((data) => data.value).join(", ");
-    addOrUpdateFile(parsedData[0].field, csvData);
-  };
 
   // WebSocket connection
   useEffect(() => {
@@ -131,18 +130,7 @@ export default function EntriesFormLayout() {
         );
       };
 
-      ws.onmessage = (event) => {
-        try {
-          const text = event.data;
-          const lines = text.trim().split("\n");
-          const parsed = lines.map(parseCSVLine);
-
-          handleWebSocketCSV(parsed);
-        } catch (err) {
-          console.error("Error parsing WebSocket message:", err);
-          setError("Error parsing server message");
-        }
-      };
+      ws.onmessage = handleWebSocketMessage;
 
       const attemptReconnection = () => {
         if (wsRef.current?.readyState === WebSocket.CLOSED) {

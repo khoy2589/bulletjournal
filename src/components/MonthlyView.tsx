@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -32,45 +32,50 @@ const MonthlyView: React.FC = () => {
   for (let i = 0; i < startingDay; i++) days.push(null);
   for (let day = 1; day <= daysInMonth; day++) days.push(day);
 
+  const fetchEvents = useCallback(
+    async (accessToken: string) => {
+      const startOfMonth = new Date(year, month, 1).toISOString();
+      const endOfMonth = new Date(year, month + 1, 0).toISOString();
+
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${startOfMonth}&timeMax=${endOfMonth}&singleEvents=true&orderBy=startTime`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const data = await res.json();
+      const items: EventItem[] = data.items ?? "[]";
+
+      const grouped: Record<number, string[]> = {};
+      items.forEach((event) => {
+        const dateStr = event.start.dateTime ?? event.start.date;
+        if (dateStr) {
+          const date = new Date(dateStr);
+          const day = date.getDate();
+          if (!grouped[day]) grouped[day] = [];
+          grouped[day].push(event.summary);
+        }
+      });
+
+      setEvents(grouped);
+    },
+    [year, month],
+  );
+
   useEffect(() => {
-    const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+    const tokenClient = (
+      window as Window
+    ).google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
-      callback: (response: { access_token: string }) => {
+      callback: (response: TokenResponse) => {
         fetchEvents(response.access_token);
       },
     });
     tokenClient.requestAccessToken();
-  }, [currentDate]);
-
-  const fetchEvents = async (accessToken: string) => {
-    const startOfMonth = new Date(year, month, 1).toISOString();
-    const endOfMonth = new Date(year, month + 1, 0).toISOString();
-
-    const res = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${startOfMonth}&timeMax=${endOfMonth}&singleEvents=true&orderBy=startTime`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    const data = await res.json();
-    const items: EventItem[] = data.items || [];
-
-    const grouped: Record<number, string[]> = {};
-    items.forEach((event) => {
-      const dateStr = event.start.dateTime ?? event.start.date;
-      if (dateStr) {
-        const date = new Date(dateStr);
-        const day = date.getDate();
-        if (!grouped[day]) grouped[day] = [];
-        grouped[day].push(event.summary);
-      }
-    });
-
-    setEvents(grouped);
-  };
+  }, [currentDate, fetchEvents]);
 
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(currentDate);
@@ -143,7 +148,7 @@ const MonthlyView: React.FC = () => {
                     : "bg-journal-cream-dark/30"
                 }`}
               >
-                {day && (
+                {Boolean(day) && (
                   <div className="h-full flex flex-col">
                     <div
                       className={`font-semibold mb-1 ${

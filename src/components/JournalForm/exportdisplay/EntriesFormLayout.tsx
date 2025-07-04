@@ -235,10 +235,9 @@ export default function EntriesFormLayout() {
 
   return (
     <div className="">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Real-time File Manager
-        </h1>
+      <div className="flex items-center pb-2 justify-between">
+        {/* Title */}
+        <div className="text-2xl font-bold text-gray-800" />
 
         {/* Connection Status */}
         <div className="flex items-center gap-3">
@@ -376,15 +375,9 @@ export default function EntriesFormLayout() {
 
       {/* Setup Instructions */}
       <div className="bg-blue-50 p-4 rounded-lg">
-        <h3 className="text-md font-semibold text-blue-800 mb-2">
-          Setup Instructions
-        </h3>
+        <h3 className="text-md font-semibold text-blue-800 mb-2">Notes</h3>
         <div className="text-sm text-blue-700 space-y-1">
-          <p>
-            1. Make sure your WebSocket server is running on ws://localhost:3001
-          </p>
-          <p>2. Server should watch the public/exports folder for changes</p>
-          <p>3. Files will automatically sync when added/modified/deleted</p>
+          <p>show all your journal file</p>
         </div>
       </div>
     </div>

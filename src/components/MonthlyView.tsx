@@ -196,7 +196,7 @@ const MonthlyView: React.FC = () => {
             "Learn new skill",
           ].map((goal, index) => (
             <div
-              key={index}
+              key={goal[index]}
               className="flex items-center gap-3 p-3 rounded-xl bg-journal-cream-dark/50"
             >
               <div className="w-4 h-4 border-2 border-journal-sage rounded"></div>

@@ -41,6 +41,14 @@ type FileOperation =
   | GetFilesOperation
   | WebSocketMessage;
 
+function parseCSVLine(line: string): { field: string; value: string } {
+  const [field, value] = line.split(",");
+  return {
+    field: field.trim(),
+    value: value?.trim() || "",
+  };
+}
+
 export default function EntriesFormLayout() {
   const [files, setFiles] = useState<{ [key: string]: string }>({});
   const [connectionStatus, setConnectionStatus] = useState<
@@ -93,6 +101,13 @@ export default function EntriesFormLayout() {
     [addOrUpdateFile, removeFile],
   );
 
+  const handleWebSocketCSV = (
+    parsedData: { field: string; value: string }[],
+  ) => {
+    const csvData = parsedData.map((data) => data.value).join(", ");
+    addOrUpdateFile(parsedData[0].field, csvData);
+  };
+
   // WebSocket connection
   useEffect(() => {
     const connectWebSocket = () => {
@@ -118,8 +133,11 @@ export default function EntriesFormLayout() {
 
       ws.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data);
-          handleWebSocketMessage(data);
+          const text = event.data;
+          const lines = text.trim().split("\n");
+          const parsed = lines.map(parseCSVLine);
+
+          handleWebSocketCSV(parsed);
         } catch (err) {
           console.error("Error parsing WebSocket message:", err);
           setError("Error parsing server message");

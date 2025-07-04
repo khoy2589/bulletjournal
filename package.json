@@ -13,7 +13,7 @@
     "start": "vite",
     "electron:build": "tsc electron/main.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop && del dist\\main.cjs 2>nul && ren dist\\main.js main.cjs",
     "electron:start": "npm run electron:build && electron dist/main.cjs",
-    "electron:dev": "concurrently \"npm run dev\"  \"npm run server\" \"wait-on http://localhost:8080 && npm run electron:start\""
+    "electron:dev": "concurrently \"npm run dev\"  \"node server.js\" \"wait-on http://localhost:8080 && npm run electron:start\""
   },
   "main": "electron/dist/main.js",
   "dependencies": {

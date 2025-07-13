@@ -7,6 +7,13 @@ interface BaseFileOperation {
   path?: string;
 }
 
+interface SaveFileOperation extends BaseFileOperation {
+  type: "SAVE_FILE";
+  filename: string;
+  content: string;
+  path: string;
+}
+
 // For additional properties, use specific interfaces:
 interface DeleteFileOperation extends BaseFileOperation {
   type: "DELETE_FILE";
@@ -36,6 +43,7 @@ interface WebSocketMessage {
 
 // Union type for all operations
 type FileOperation =
+  | SaveFileOperation
   | DeleteFileOperation
   | UpdateFileOperation
   | GetFilesOperation
@@ -171,6 +179,15 @@ export default function EntriesFormLayout() {
     }
   };
 
+  const handleSave = (filename: string, content: string) => {
+    sendFileOperation({
+      type: "SAVE_FILE",
+      filename: filename,
+      content: content,
+      path: "public/exports",
+    });
+  };
+
   const handleDelete = (filename: string) => {
     if (confirm(`Are you sure you want to delete ${filename}?`)) {
       sendFileOperation({
@@ -182,10 +199,19 @@ export default function EntriesFormLayout() {
   };
 
   const downloadFile = (filename: string, content: string) => {
+    // Save to server via WebSocket
+    sendFileOperation({
+      type: "SAVE_FILE",
+      filename: filename,
+      content: content,
+      path: "public/exports",
+    });
+
     // Clean up previous blob URLs
     blobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     blobUrlsRef.current = [];
 
+    // Download locally
     const blob = new Blob([content], {
       type: "text/csv;charset=utf-8;",
     });

@@ -34,6 +34,25 @@ app.get("/api/files", (req, res) => {
   });
 });
 
+app.post("/api/save", (req, res) => {
+  const { filename, content } = req.body;
+
+  if (!filename || typeof content !== "string") {
+    return res.status(400).json({ error: "Invalid input." });
+  }
+
+  const savePath = path.join(EXPORTS_PATH, filename);
+
+  if (!savePath.startsWith(EXPORTS_PATH)) {
+    return res.status(400).json({ error: "Invalid path." });
+  }
+
+  fs.writeFile(savePath, content, "utf-8", (err) => {
+    if (err) return res.status(500).json({ error: "Save failed." });
+    res.json({ success: true });
+  });
+});
+
 app.post("/api/delete-file", (req, res) => {
   const { filename } = req.body;
   const filePath = path.join(EXPORTS_PATH, filename);
@@ -127,6 +146,35 @@ wss.on("connection", (ws) => {
               // File watcher will handle broadcasting the deletion
             });
           }
+          break;
+        }
+
+        case "SAVE_FILE": {
+          const savePath = path.join(EXPORTS_PATH, data.filename);
+          if (!savePath.startsWith(EXPORTS_PATH)) {
+            ws.send(
+              JSON.stringify({ type: "ERROR", message: "Invalid filename." }),
+            );
+            return;
+          }
+
+          fs.writeFile(savePath, data.content, "utf-8", (err) => {
+            if (err) {
+              ws.send(
+                JSON.stringify({ type: "ERROR", message: "Save failed." }),
+              );
+            } else {
+              ws.send(
+                JSON.stringify({ type: "SUCCESS", message: "File saved." }),
+              );
+              // Optional: broadcast new file
+              broadcastToClients({
+                type: "FILE_ADDED",
+                filename: data.filename,
+                content: data.content,
+              });
+            }
+          });
           break;
         }
 

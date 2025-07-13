@@ -119,7 +119,7 @@ const DailyLog: React.FC = () => {
 
       {/* Entries */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <h3 className="text-lg font-semibold text-journal-stone mb-4">
+        <h3 className="text-lg font-semibold text-journal-stone mb-1">
           Entries
         </h3>
         <div>

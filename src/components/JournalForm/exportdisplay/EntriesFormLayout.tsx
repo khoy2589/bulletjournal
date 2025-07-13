@@ -170,6 +170,16 @@ export default function EntriesFormLayout() {
     };
   }, [handleWebSocketMessage]);
 
+  const [selectedFile, setSelectedFile] = useState(Object.keys(files)[0] || "");
+
+  // Seperate file load
+  useEffect(() => {
+    const fileKeys = Object.keys(files);
+    if (fileKeys.length > 0 && !fileKeys.includes(selectedFile)) {
+      setSelectedFile(fileKeys[0]);
+    }
+  }, [files]);
+
   // Send file operation to server
   const sendFileOperation = (operation: FileOperation) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -261,30 +271,36 @@ export default function EntriesFormLayout() {
 
   return (
     <div className="">
-      <div className="flex items-center pb-2 justify-between">
-        {/* Title */}
-        <div className="text-2xl font-bold text-gray-800" />
+      {/* Title */}
+      <div className="flex items-center justify-between rounded-lg p-1 mb-1">
+        {/* Notes on the left */}
+        <div className="flex bg-blue-50 px-4 py-1 rounded-lg">
+          <h3 className="text-md font-semibold text-blue-800 pr-2">Notes:</h3>
+          <p className="text-sm pt-1 text-blue-700">
+            Show all your journal files
+          </p>
+        </div>
 
-        {/* Connection Status */}
+        {/* Status + Refresh on the right */}
         <div className="flex items-center gap-3">
           <div
             className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor()}`}
           >
             {connectionStatus === "connecting" && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
                 Connecting...
               </div>
             )}
             {connectionStatus === "connected" && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
                 Connected
               </div>
             )}
             {connectionStatus === "disconnected" && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-red-500 rounded-full" />
                 Disconnected
               </div>
             )}
@@ -293,7 +309,7 @@ export default function EntriesFormLayout() {
           <button
             onClick={refreshFiles}
             disabled={connectionStatus !== "connected"}
-            className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-1.5 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Refresh
           </button>
@@ -389,23 +405,29 @@ export default function EntriesFormLayout() {
       {/* File preview */}
       {Object.keys(files).length > 0 && (
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="text-md font-semibold text-gray-700 mb-2">
-            Preview: {Object.keys(files)[0]}
-          </h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-md font-semibold text-gray-700 mb-2">
+              Preview: {selectedFile}
+            </h3>
+            <select
+              aria-label="Select a file to preview"
+              className="text-sm border rounded px-2 py-1 bg-white"
+              value={selectedFile}
+              onChange={(e) => setSelectedFile(e.target.value)}
+            >
+              {Object.keys(files).map((filename) => (
+                <option key={filename} value={filename}>
+                  {filename}
+                </option>
+              ))}
+            </select>
+          </div>
           <pre className="text-xs text-gray-600 bg-white p-3 rounded border overflow-x-auto">
-            {Object.values(files)[0].split("\n").slice(0, 5).join("\n")}
-            {Object.values(files)[0].split("\n").length > 5 && "\n..."}
+            {files[selectedFile]?.split("\n").slice(0, 23).join("\n")}
+            {files[selectedFile]?.split("\n").length > 23 && "\n..."}
           </pre>
         </div>
       )}
-
-      {/* Setup Instructions */}
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <h3 className="text-md font-semibold text-blue-800 mb-2">Notes</h3>
-        <div className="text-sm text-blue-700 space-y-1">
-          <p>show all your journal file</p>
-        </div>
-      </div>
     </div>
   );
 }

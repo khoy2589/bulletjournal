@@ -19,6 +19,10 @@ const DailyQuote: React.FC = () => {
       text: "Today is a gift, that's why it's called the present.",
       author: "Bill Keane",
     },
+    {
+      text: "Consistency Always wins.",
+      author: "Anonymous",
+    },
   ];
 
   const todayQuote = quotes[new Date().getDate() % quotes.length];

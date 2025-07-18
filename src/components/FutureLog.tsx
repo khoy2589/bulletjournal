@@ -87,10 +87,10 @@ const FutureLog: React.FC = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { goal: "Read 24 books", progress: 8, total: 24 },
-            { goal: "Learn Spanish", progress: 3, total: 12 },
-            { goal: "Run 500 miles", progress: 127, total: 500 },
-            { goal: "Save $10,000", progress: 3500, total: 10000 },
+            { goal: "Complete Bullet journey WebApp", progress: 0, total: 1 },
+            { goal: "Learn Japanese", progress: 1, total: 100 },
+            { goal: "Get A job", progress: 0, total: 1 },
+            { goal: "Save 10,000฿", progress: 1000, total: 10000 },
           ].map((item, index) => (
             <div
               key={item[index]}

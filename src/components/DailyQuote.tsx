@@ -23,6 +23,26 @@ const DailyQuote: React.FC = () => {
       text: "Consistency Always wins.",
       author: "Anonymous",
     },
+    {
+      text: "You get what you fight for, not what you wish for.",
+      author: "GROWTH",
+    },
+    {
+      text: "Comfort kills more dreams than failure ever will.",
+      author: "GROWTH",
+    },
+    {
+      text: "If it doesn't push you, it doesn't grow you.",
+      author: "GROWTH",
+    },
+    {
+      text: "It's not luck, it's relentless quiet work.",
+      author: "GROWTH",
+    },
+    {
+      text: "You've come too far to only come this far.",
+      author: "GROWTH",
+    },
   ];
 
   const todayQuote = quotes[new Date().getDate() % quotes.length];

@@ -7,7 +7,6 @@ import ThoughtsSection from "./section/leftcol/ThoughtsSection";
 import YesterdaySection from "./section/leftcol/YesterdaySection";
 
 // Right Column
-import DailyQuoteSection from "./section/rightcol/DailyQuoteSection";
 import MaintenanceSection from "./section/rightcol/MaintenanceSection";
 import ScheduleSection from "./section/rightcol/ScheduleSection";
 import GoalsSection from "./section/rightcol/GoalsSection";
@@ -15,6 +14,7 @@ import ThinkOutSideTheBoxSection from "./section/leftcol/ThinkOutSideTheBoxSecti
 import CalendarHeader from "./CalendarHeader";
 
 import { supabase } from "@/lib/supabase";
+import GoalIdeaSection from "./section/rightcol/GoalIdeaSection";
 
 // Define interfaces for component refs
 interface MaintenanceRef {
@@ -213,7 +213,6 @@ const JournalFormLayout = () => {
           />
 
           <MaintenanceSection ref={maintenanceRef} />
-          <DailyQuoteSection />
           <ScheduleSection
             schedule={todaySchedule}
             onScheduleChange={setTodaySchedule}
@@ -223,6 +222,8 @@ const JournalFormLayout = () => {
           <GoalsSection
             dreamGoals={dreamGoals}
             onDreamGoalsChange={setDreamGoals}
+          />
+          <GoalIdeaSection
             achievementIdeas={achievementIdeas}
             onAchievementIdeasChange={setAchievementIdeas}
           />

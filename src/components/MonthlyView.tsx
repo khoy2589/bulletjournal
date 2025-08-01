@@ -13,6 +13,28 @@ const MonthlyView: React.FC = () => {
   const [events, setEvents] = useState<Record<number, string[]>>({});
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  const [goal, setGoal] = useState("");
+  const [goals, setGoals] = useState([]);
+  const [completed, setCompleted] = useState([]);
+  const [deleted, setDeleted] = useState([]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (goal.trim() === "") return;
+    setGoals((goals) => [...goals, goal]);
+    setGoal("");
+  };
+  const handleComplete = (index) => {
+    const completedGoal = goals[index];
+    setCompleted([...completed, completedGoal]);
+    setGoals(goals.filter((_, i) => i !== index));
+  };
+  const handleDelete = (index) => {
+    // ทำให้ function นี้ใช้ได้หรือลบทิ้ง
+    const deletedGoal = goals[index];
+    console.log("deletedGoal");
+  };
+
   const today = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -184,22 +206,41 @@ const MonthlyView: React.FC = () => {
       </div>
 
       {/* Monthly Goals */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <h3 className="text-lg font-semibold text-journal-stone mb-4">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 space-y-4">
+        <h3 className="text-xl font-semibold text-journal-stone">
           Monthly Goals
         </h3>
+
+        <form className=" flex gap-3" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
+            className="flex-1 px-3 bg-none border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-journal-sage focus:border-transparent py-1 text-sm font-medium"
+            placeholder="What will you achieve in this month?"
+          />
+          <button
+            type="submit"
+            className="w-1/6 px-4 py-2 rounded-xl bg-journal-cream-dark text-journal-stone hover:bg-journal-sage/10 transition-colors duration-200"
+          >
+            Register
+          </button>
+        </form>
+
+        {/* Goal List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            "Complete project Alpha",
-            "Read 2 books",
-            "Exercise 15 times",
-            "Learn new skill",
-          ].map((goal, index) => (
+          {goals.map((goal, index) => (
             <div
-              key={goal[index]}
+              key={`${goal}-${index}`}
               className="flex items-center gap-3 p-3 rounded-xl bg-journal-cream-dark/50"
             >
-              <div className="w-4 h-4 border-2 border-journal-sage rounded"></div>
+              <input
+                type="checkbox"
+                placeholder="Completed"
+                className="w-4 h-4  accent-journal-sage rounded bg-none"
+                onChange={() => handleComplete(index)}
+              />
+
               <span className="text-journal-stone">{goal}</span>
             </div>
           ))}
